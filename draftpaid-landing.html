@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DraftPaid — Professional Invoice Generator. No Account Required.</title>
+  <meta name="description" content="Create professional invoices in 30 seconds. No account needed, no watermarks, no tricks. Free forever for freelancers and small businesses."/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink:     #0a0908;
+      --off:     #f7f4ef;
+      --cream:   #ede9de;
+      --gold:    #c8a951;
+      --gold-lt: #e8d48e;
+      --slate:   #2c3e50;
+      --muted:   #6b6560;
+      --border:  #ddd9d0;
+      --white:   #ffffff;
+      --green:   #2d7a4f;
+      --r: 6px;
+      --font-d: "Playfair Display", Georgia, serif;
+      --font-b: "Outfit", sans-serif;
+      --font-m: "JetBrains Mono", monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-b);
+      background: var(--off);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4%; height: 64px;
+      background: rgba(247,244,239,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-d);
+      font-size: 1.4rem; color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); font-style: italic; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      font-size: .85rem; font-weight: 500; color: var(--muted);
+      text-decoration: none; letter-spacing: .03em;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      background: var(--ink); color: var(--off) !important;
+      padding: .5rem 1.2rem; border-radius: var(--r);
+      font-size: .82rem !important; font-weight: 600 !important;
+      letter-spacing: .04em; transition: background .2s !important;
+    }
+    .nav-cta:hover { background: var(--gold) !important; color: var(--ink) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 4rem;
+      padding: 100px 6% 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 70% 50%, rgba(200,169,81,.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(44,62,80,.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--cream); border: 1px solid var(--border);
+      border-radius: 99px; padding: .35rem 1rem;
+      font-family: var(--font-m); font-size: .7rem;
+      color: var(--green); font-weight: 500; letter-spacing: .06em;
+      margin-bottom: 1.5rem;
+      animation: fadeUp .6s ease both;
+    }
+    .hero-badge::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(45,122,79,.2);
+    }
+    .hero-headline {
+      font-family: var(--font-d);
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      line-height: 1.1; font-weight: 900;
+      color: var(--ink); margin-bottom: 1.5rem;
+      animation: fadeUp .6s .1s ease both;
+    }
+    .hero-headline em {
+      font-style: italic; color: var(--gold);
+      display: block;
+    }
+    .hero-sub {
+      font-size: 1.1rem; color: var(--muted);
+      line-height: 1.7; max-width: 480px;
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+      animation: fadeUp .6s .2s ease both;
+    }
+    .hero-sub strong { color: var(--ink); font-weight: 600; }
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      animation: fadeUp .6s .3s ease both;
+    }
+    .btn-hero {
+      font-family: var(--font-b);
+      font-size: .95rem; font-weight: 600;
+      padding: .9rem 2rem; border-radius: var(--r);
+      border: none; cursor: pointer;
+      text-decoration: none; display: inline-flex;
+      align-items: center; gap: .5rem;
+      transition: all .2s ease; letter-spacing: .02em;
+    }
+    .btn-hero-primary {
+      background: var(--ink); color: var(--off);
+      box-shadow: 0 4px 24px rgba(10,9,8,.2);
+    }
+    .btn-hero-primary:hover {
+      background: var(--gold); color: var(--ink);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(200,169,81,.3);
+    }
+    .btn-hero-secondary {
+      background: transparent; color: var(--muted);
+      border: 1.5px solid var(--border);
+    }
+    .btn-hero-secondary:hover { border-color: var(--ink); color: var(--ink); }
+    .hero-trust {
+      display: flex; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap;
+      animation: fadeUp .6s .4s ease both;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .78rem; color: var(--muted); font-weight: 500;
+    }
+    .trust-icon { color: var(--green); font-size: .9rem; }
+
+    /* HERO VISUAL */
+    .hero-visual {
+      position: relative;
+      animation: fadeUp .8s .2s ease both;
+    }
+    .invoice-mockup {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 24px 80px rgba(10,9,8,.15), 0 4px 16px rgba(10,9,8,.08);
+      padding: 2rem;
+      position: relative;
+      transform: perspective(1000px) rotateY(-3deg) rotateX(2deg);
+      transition: transform .4s ease;
+    }
+    .invoice-mockup:hover {
+      transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+    }
+    .mock-top {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--ink);
+    }
+    .mock-brand {
+      font-family: var(--font-d); font-size: 1.3rem; color: var(--ink);
+    }
+    .mock-inv {
+      text-align: right;
+    }
+    .mock-inv-label {
+      font-family: var(--font-d); font-size: 1.6rem;
+      font-style: italic; color: var(--gold);
+    }
+    .mock-inv-num {
+      font-family: var(--font-m); font-size: .65rem;
+      color: var(--muted); margin-top: .2rem;
+    }
+    .mock-parties {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin-bottom: 1.2rem;
+    }
+    .mock-party-label {
+      font-family: var(--font-m); font-size: .6rem;
+      color: var(--muted); letter-spacing: .1em;
+      text-transform: uppercase; margin-bottom: .25rem;
+    }
+    .mock-party-name { font-weight: 600; font-size: .85rem; }
+    .mock-party-detail { font-size: .75rem; color: var(--muted); }
+    .mock-items { margin-bottom: 1rem; }
+    .mock-item-row {
+      display: flex; justify-content: space-between;
+      font-size: .8rem; padding: .4rem 0;
+      border-bottom: 1px solid var(--cream);
+    }
+    .mock-item-row:first-child {
+      font-family: var(--font-m); font-size: .62rem;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: .08em; border-bottom: 1.5px solid var(--ink);
+      padding-bottom: .5rem;
+    }
+    .mock-total {
+      display: flex; justify-content: flex-end;
+    }
+    .mock-total-box {
+      min-width: 160px;
+    }
+    .mock-total-row {
+      display: flex; justify-content: space-between;
+      font-size: .78rem; padding: .3rem 0;
+      color: var(--muted);
+    }
+    .mock-total-row.grand {
+      border-top: 2px solid var(--ink);
+      font-weight: 700; color: var(--ink);
+      font-size: .88rem; padding-top: .5rem; margin-top: .2rem;
+    }
+    .mock-total-row span:last-child { font-family: var(--font-m); }
+    .mock-badge {
+      position: absolute; top: -12px; right: 24px;
+      background: var(--green); color: var(--white);
+      font-family: var(--font-m); font-size: .65rem;
+      font-weight: 500; letter-spacing: .08em;
+      padding: .3rem .8rem; border-radius: 99px;
+      box-shadow: 0 4px 12px rgba(45,122,79,.3);
+    }
+    .floating-pill {
+      position: absolute; background: var(--white);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: .6rem .9rem;
+      box-shadow: 0 8px 24px rgba(10,9,8,.1);
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .78rem; font-weight: 600;
+      animation: float 4s ease-in-out infinite;
+    }
+    .pill-1 { bottom: -20px; left: -30px; animation-delay: 0s; }
+    .pill-2 { top: 60px; right: -40px; animation-delay: 1.5s; }
+    .pill-icon { font-size: 1rem; }
+
+    /* ── LOGOS / SOCIAL PROOF BAR ── */
+    .proof-bar {
+      background: var(--ink); color: var(--off);
+      padding: 1.2rem 6%;
+      display: flex; align-items: center; gap: 2rem;
+      overflow: hidden;
+    }
+    .proof-label {
+      font-family: var(--font-m); font-size: .68rem;
+      color: var(--gold-lt); letter-spacing: .1em;
+      text-transform: uppercase; white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .proof-stats {
+      display: flex; gap: 3rem; flex-wrap: wrap;
+    }
+    .proof-stat {
+      display: flex; flex-direction: column; gap: .1rem;
+    }
+    .proof-num {
+      font-family: var(--font-d); font-size: 1.4rem;
+      color: var(--gold-lt); font-weight: 700;
+    }
+    .proof-desc {
+      font-size: .72rem; color: rgba(247,244,239,.6);
+      font-family: var(--font-m);
+    }
+
+    /* ── FEATURES ── */
+    .section { padding: 100px 6%; }
+    .section-label {
+      font-family: var(--font-m); font-size: .72rem;
+      color: var(--gold); letter-spacing: .14em;
+      text-transform: uppercase; margin-bottom: .75rem;
+    }
+    .section-title {
+      font-family: var(--font-d); font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 900; line-height: 1.15; margin-bottom: 1rem;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .section-sub {
+      font-size: 1.05rem; color: var(--muted);
+      max-width: 560px; line-height: 1.7; margin-bottom: 4rem;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+      transition: all .25s ease;
+      position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s ease;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(10,9,8,.1); }
+    .feature-card:hover::before { transform: scaleX(1); }
+    .feature-icon {
+      font-size: 2rem; margin-bottom: 1rem;
+      display: block;
+    }
+    .feature-title {
+      font-family: var(--font-d); font-size: 1.15rem;
+      font-weight: 700; margin-bottom: .6rem;
+    }
+    .feature-desc { font-size: .9rem; color: var(--muted); line-height: 1.65; }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      background: var(--ink); color: var(--off);
+      padding: 100px 6%;
+    }
+    .how-section .section-label { color: var(--gold-lt); }
+    .how-section .section-title { color: var(--off); }
+    .how-section .section-sub { color: rgba(247,244,239,.6); }
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2rem; position: relative;
+    }
+    .steps-grid::before {
+      content: '';
+      position: absolute; top: 28px; left: 16.6%; right: 16.6%;
+      height: 1px; background: rgba(200,169,81,.3);
+      pointer-events: none;
+    }
+    .step {
+      display: flex; flex-direction: column; gap: 1rem;
+      position: relative;
+    }
+    .step-num {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--gold); color: var(--ink);
+      font-family: var(--font-d); font-size: 1.3rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative; z-index: 1;
+    }
+    .step-title {
+      font-family: var(--font-d); font-size: 1.2rem;
+      font-weight: 700; color: var(--off);
+    }
+    .step-desc { font-size: .9rem; color: rgba(247,244,239,.6); line-height: 1.65; }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid; grid-template-columns: 1fr 1.1fr 1fr;
+      gap: 1.5rem; align-items: center;
+    }
+    .price-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2.5rem 2rem;
+      transition: all .25s ease;
+    }
+    .price-card.featured {
+      background: var(--ink); color: var(--off);
+      border-color: var(--gold);
+      box-shadow: 0 24px 60px rgba(10,9,8,.2);
+      transform: scale(1.03);
+    }
+    .price-card.featured .price-name { color: var(--gold-lt); }
+    .price-card.featured .price-desc { color: rgba(247,244,239,.6); }
+    .price-card.featured .price-feature { color: rgba(247,244,239,.8); }
+    .price-card.featured .price-feature::before { color: var(--gold); }
+    .price-badge {
+      display: inline-block; background: var(--gold);
+      color: var(--ink); font-family: var(--font-m);
+      font-size: .65rem; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      padding: .2rem .7rem; border-radius: 99px;
+      margin-bottom: 1rem;
+    }
+    .price-name {
+      font-family: var(--font-d); font-size: 1.3rem;
+      font-weight: 700; margin-bottom: .4rem;
+    }
+    .price-desc { font-size: .85rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .price-amount {
+      display: flex; align-items: baseline; gap: .3rem;
+      margin-bottom: 1.5rem;
+    }
+    .price-dollar {
+      font-family: var(--font-m); font-size: 1rem;
+      color: var(--muted);
+    }
+    .price-num {
+      font-family: var(--font-d); font-size: 3rem;
+      font-weight: 900; line-height: 1;
+    }
+    .price-period { font-size: .82rem; color: var(--muted); }
+    .price-features { list-style: none; margin-bottom: 2rem; }
+    .price-feature {
+      font-size: .88rem; padding: .5rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink); display: flex; gap: .6rem;
+    }
+    .price-card.featured .price-feature { border-color: rgba(255,255,255,.1); }
+    .price-feature::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .price-feature.no::before { content: '–'; color: var(--muted); }
+    .price-feature.no { color: var(--muted); }
+    .btn-price {
+      width: 100%; padding: .85rem;
+      border-radius: var(--r); font-family: var(--font-b);
+      font-size: .9rem; font-weight: 600; cursor: pointer;
+      border: none; transition: all .2s; letter-spacing: .02em;
+      text-align: center; text-decoration: none; display: block;
+    }
+    .btn-price-outline {
+      background: transparent; border: 1.5px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-price-outline:hover { border-color: var(--ink); color: var(--ink); }
+    .btn-price-gold {
+      background: var(--gold); color: var(--ink);
+      box-shadow: 0 4px 16px rgba(200,169,81,.3);
+    }
+    .btn-price-gold:hover { background: #b8932e; transform: translateY(-1px); }
+    .btn-price-white {
+      background: var(--off); color: var(--ink);
+    }
+    .btn-price-white:hover { background: var(--gold); }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-section { background: var(--cream); padding: 100px 6%; }
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .testimonial {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+      position: relative;
+    }
+    .testimonial::before {
+      content: '"'; font-family: var(--font-d);
+      font-size: 4rem; color: var(--gold-lt);
+      line-height: 1; position: absolute;
+      top: 1rem; right: 1.5rem; opacity: .5;
+    }
+    .stars { color: var(--gold); font-size: .9rem; margin-bottom: 1rem; }
+    .testimonial-text {
+      font-size: .92rem; line-height: 1.7;
+      color: var(--ink); margin-bottom: 1.5rem;
+    }
+    .testimonial-author { display: flex; align-items: center; gap: .75rem; }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .9rem; color: var(--white);
+      flex-shrink: 0;
+    }
+    .author-name { font-weight: 600; font-size: .88rem; }
+    .author-role { font-size: .78rem; color: var(--muted); }
+
+    /* ── FAQ ── */
+    .faq-grid { max-width: 720px; margin: 0 auto; }
+    .faq-item {
+      border-bottom: 1px solid var(--border); padding: 1.5rem 0;
+      cursor: pointer;
+    }
+    .faq-question {
+      display: flex; justify-content: space-between;
+      align-items: center; gap: 1rem;
+      font-weight: 600; font-size: .98rem;
+      user-select: none;
+    }
+    .faq-toggle {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--cream); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0; transition: all .2s;
+      color: var(--muted);
+    }
+    .faq-item.open .faq-toggle {
+      background: var(--gold); color: var(--ink); border-color: var(--gold);
+      transform: rotate(45deg);
+    }
+    .faq-answer {
+      font-size: .92rem; color: var(--muted); line-height: 1.7;
+      max-height: 0; overflow: hidden;
+      transition: max-height .3s ease, padding .3s ease;
+    }
+    .faq-item.open .faq-answer { max-height: 200px; padding-top: 1rem; }
+
+    /* ── CTA BANNER ── */
+    .cta-section {
+      background: var(--ink); padding: 100px 6%;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(200,169,81,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section .section-label { color: var(--gold-lt); }
+    .cta-title {
+      font-family: var(--font-d); font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 900; color: var(--off); line-height: 1.15;
+      max-width: 700px; margin: 0 auto 1.5rem;
+    }
+    .cta-title em { color: var(--gold); font-style: italic; }
+    .cta-sub {
+      font-size: 1.05rem; color: rgba(247,244,239,.6);
+      max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.7;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #07060a; color: rgba(247,244,239,.5);
+      padding: 3rem 6%;
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 3rem;
+    }
+    .footer-brand { display: flex; flex-direction: column; gap: 1rem; }
+    .footer-logo {
+      font-family: var(--font-d); font-size: 1.4rem;
+      color: var(--off);
+    }
+    .footer-logo span { color: var(--gold); font-style: italic; }
+    .footer-tagline { font-size: .85rem; line-height: 1.6; }
+    .footer-col h4 {
+      font-family: var(--font-m); font-size: .7rem;
+      color: rgba(247,244,239,.3); letter-spacing: .12em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .footer-col a {
+      display: block; font-size: .85rem;
+      color: rgba(247,244,239,.5); text-decoration: none;
+      margin-bottom: .6rem; transition: color .2s;
+    }
+    .footer-col a:hover { color: var(--gold); }
+    .footer-bottom {
+      background: #07060a; padding: 1.2rem 6%;
+      border-top: 1px solid rgba(255,255,255,.06);
+      display: flex; justify-content: space-between;
+      align-items: center; font-size: .78rem;
+      color: rgba(247,244,239,.3);
+      font-family: var(--font-m);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding-top: 80px; }
+      .hero-visual { display: none; }
+      .features-grid, .pricing-grid, .testimonials-grid, .steps-grid { grid-template-columns: 1fr; }
+      .steps-grid::before { display: none; }
+      .pricing-grid .price-card.featured { transform: none; }
+      footer { grid-template-columns: 1fr 1fr; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="nav-logo"><span>Draft</span>Paid</a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it Works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="invoice-generator.html" class="nav-cta">Create Invoice →</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">✦ No account required — ever</div>
+    <h1 class="hero-headline">
+      Professional invoices
+      <em>in 30 seconds.</em>
+    </h1>
+    <p class="hero-sub">
+      DraftPaid is the invoice generator that <strong>just works</strong>. No signup walls, no invoice watermarks, no hidden fees, no tricks. Create a beautiful, professional invoice right now — free.
+    </p>
+    <div class="hero-actions">
+      <a href="invoice-generator.html" class="btn-hero btn-hero-primary">
+        Get Started — No Account Needed →
+      </a>
+      <a href="#how" class="btn-hero btn-hero-secondary">See how it works</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item"><span class="trust-icon">✓</span> Always free to start</div>
+      <div class="trust-item"><span class="trust-icon">✓</span> No watermarks — just a tiny footer credit</div>
+      <div class="trust-item"><span class="trust-icon">✓</span> Download as PDF instantly</div>
+      <div class="trust-item"><span class="trust-icon">✓</span> Your data stays private</div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="invoice-mockup">
+      <div class="mock-badge">PAID ✓</div>
+      <div class="mock-top">
+        <div class="mock-brand">Acme Studio</div>
+        <div class="mock-inv">
+          <div class="mock-inv-label">Invoice</div>
+          <div class="mock-inv-num">INV-2026-042 · Due Apr 14</div>
+        </div>
+      </div>
+      <div class="mock-parties">
+        <div>
+          <div class="mock-party-label">From</div>
+          <div class="mock-party-name">Jane Cooper</div>
+          <div class="mock-party-detail">hello@acmestudio.co</div>
+        </div>
+        <div>
+          <div class="mock-party-label">Billed To</div>
+          <div class="mock-party-name">Horizon Corp</div>
+          <div class="mock-party-detail">accounts@horizon.com</div>
+        </div>
+      </div>
+      <div class="mock-items">
+        <div class="mock-item-row">
+          <span>Description</span><span>Qty</span><span>Price</span><span>Amount</span>
+        </div>
+        <div class="mock-item-row">
+          <span>Brand Design</span><span>1</span><span>$1,200</span><span>$1,200</span>
+        </div>
+        <div class="mock-item-row">
+          <span>Web Development</span><span>8h</span><span>$150</span><span>$1,200</span>
+        </div>
+        <div class="mock-item-row">
+          <span>SEO Consulting</span><span>1</span><span>$400</span><span>$400</span>
+        </div>
+      </div>
+      <div class="mock-total">
+        <div class="mock-total-box">
+          <div class="mock-total-row"><span>Subtotal</span><span>$2,800</span></div>
+          <div class="mock-total-row"><span>Tax (8%)</span><span>$224</span></div>
+          <div class="mock-total-row grand"><span>Total Due</span><span>$3,024</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="floating-pill pill-1">
+      <span class="pill-icon">⚡</span>
+      <span>Invoice sent in 30s</span>
+    </div>
+    <div class="floating-pill pill-2">
+      <span class="pill-icon">🔒</span>
+      <span>No account needed</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROOF BAR ── -->
+<div class="proof-bar">
+  <div class="proof-label">DraftPaid by the numbers</div>
+  <div class="proof-stats">
+    <div class="proof-stat">
+      <div class="proof-num">30s</div>
+      <div class="proof-desc">avg. time to first invoice</div>
+    </div>
+    <div class="proof-stat">
+      <div class="proof-num">$0</div>
+      <div class="proof-desc">to get started</div>
+    </div>
+    <div class="proof-stat">
+      <div class="proof-num">100%</div>
+      <div class="proof-desc">No invoice watermarks — ever</div>
+    </div>
+    <div class="proof-stat">
+      <div class="proof-num">0</div>
+      <div class="proof-desc">signups required</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURES ── -->
+<section class="section" id="features">
+  <div class="section-label">Why DraftPaid</div>
+  <h2 class="section-title">Built for people who<br><em>just want it to work.</em></h2>
+  <p class="section-sub">While other tools hide features behind signups or plaster watermarks on your work, DraftPaid gives you everything you need — immediately, for free, with no strings attached.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">⚡</span>
+      <div class="feature-title">Instant & No Account</div>
+      <p class="feature-desc">Open DraftPaid, fill in your details, download your PDF. No email, no password, no verification codes. Done in under a minute, every time.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎨</span>
+      <div class="feature-title">Genuinely Professional</div>
+      <p class="feature-desc">Clean, modern invoice designs that look like you hired a designer. Your clients will notice the difference — in a good way.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔒</span>
+      <div class="feature-title">Your Data, Your Device</div>
+      <p class="feature-desc">Invoice data lives in your browser by default. We don't store your financial information on our servers. No data leaks, no privacy concerns.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🧮</span>
+      <div class="feature-title">Auto-Calculating Totals</div>
+      <p class="feature-desc">Add line items, quantities, and prices — DraftPaid handles the math automatically. Tax percentages, discounts, and totals update live as you type.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌍</span>
+      <div class="feature-title">Multi-Currency Support</div>
+      <p class="feature-desc">Invoice clients in USD, EUR, GBP, CAD, JPY, and more. Perfect for freelancers working with international clients across borders.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📄</span>
+      <div class="feature-title">PDF Download, Always Free</div>
+      <p class="feature-desc">Download a clean, print-ready PDF of every invoice — free, forever, with no stamp or watermark on your invoice. Send it, print it, archive it. It's yours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how-section" id="how">
+  <div class="section-label">How it works</div>
+  <h2 class="section-title" style="color:var(--off)">Three steps to a<br><em>professional invoice.</em></h2>
+  <p class="section-sub">No tutorial required. No onboarding flow. No demo call. Just open DraftPaid and start invoicing.</p>
+
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">Fill in your details</div>
+      <p class="step-desc">Enter your name or business, your client's info, invoice number, and dates. Takes about 60 seconds — less if you've done it before.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">Add your line items</div>
+      <p class="step-desc">List your services, products, or hours. Add quantities and prices. DraftPaid calculates everything automatically — subtotals, tax, discounts, total due.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">Download & send</div>
+      <p class="step-desc">Preview your invoice, then click Download PDF. Send it to your client via email, WhatsApp, or any way you like. Get paid.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section class="section" id="pricing">
+  <div class="section-label">Simple pricing</div>
+  <h2 class="section-title">No surprises. <em>Ever.</em></h2>
+  <p class="section-sub">We promise: no hidden fees, no bait-and-switch, no price hikes for existing users. Early users are grandfathered at their original rate — guaranteed.</p>
+
+  <div class="pricing-grid">
+    <!-- Free -->
+    <div class="price-card">
+      <div class="price-name">Basic</div>
+      <div class="price-desc">Perfect for getting started</div>
+      <div class="price-amount">
+        <span class="price-dollar">$</span>
+        <span class="price-num">0</span>
+        <span class="price-period">/ month</span>
+      </div>
+      <ul class="price-features">
+        <li class="price-feature">Up to 5 invoices/month</li>
+        <li class="price-feature">3 clients</li>
+        <li class="price-feature">2 clean templates</li>
+        <li class="price-feature">PDF download</li>
+        <li class="price-feature">Multi-currency</li>
+        <li class="price-feature no">No account required</li>
+        <li class="price-feature no">DraftPaid footer (small)</li>
+      </ul>
+      <a href="invoice-generator.html" class="btn-price btn-price-outline">Start Free →</a>
+    </div>
+
+    <!-- Pro (featured) -->
+    <div class="price-card featured">
+      <div class="price-badge">Most Popular</div>
+      <div class="price-name">Pro</div>
+      <div class="price-desc">For serious freelancers</div>
+      <div class="price-amount">
+        <span class="price-dollar" style="color:rgba(247,244,239,.5)">$</span>
+        <span class="price-num" style="color:var(--gold-lt)">9</span>
+        <span class="price-period" style="color:rgba(247,244,239,.5)">/ month</span>
+      </div>
+      <ul class="price-features">
+        <li class="price-feature">Unlimited invoices</li>
+        <li class="price-feature">Unlimited clients</li>
+        <li class="price-feature">10+ premium templates</li>
+        <li class="price-feature">Remove DraftPaid branding</li>
+        <li class="price-feature">Recurring invoices</li>
+        <li class="price-feature">Payment reminders</li>
+        <li class="price-feature">Invoice tracking</li>
+      </ul>
+      <a href="#" class="btn-price btn-price-gold">Get Pro — $9/mo →</a>
+    </div>
+
+    <!-- Business -->
+    <div class="price-card">
+      <div class="price-name">Business</div>
+      <div class="price-desc">For growing teams</div>
+      <div class="price-amount">
+        <span class="price-dollar">$</span>
+        <span class="price-num">24</span>
+        <span class="price-period">/ month</span>
+      </div>
+      <ul class="price-features">
+        <li class="price-feature">Everything in Pro</li>
+        <li class="price-feature">5 team members</li>
+        <li class="price-feature">Client portal</li>
+        <li class="price-feature">Custom domain</li>
+        <li class="price-feature">API access</li>
+        <li class="price-feature">Zapier integration</li>
+        <li class="price-feature">Priority support</li>
+      </ul>
+      <a href="#" class="btn-price btn-price-outline">Get Business →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials-section" id="testimonials">
+  <div class="section-label">Loved by freelancers</div>
+  <h2 class="section-title">Real people. <em>Real results.</em></h2>
+  <p class="section-sub">Thousands of freelancers and small business owners trust DraftPaid to look professional and get paid faster.</p>
+
+  <div class="testimonials-grid">
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"I was using Wave for 3 years until they held my payment for 65 days with no explanation. Switched to DraftPaid and never looked back. Simple, beautiful, and it just works."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:#2d7a4f">MR</div>
+        <div>
+          <div class="author-name">Marcus R.</div>
+          <div class="author-role">Freelance Photographer</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Finally an invoice tool that doesn't require me to create an account and remember another password. Open it, fill it in, download. That's it. Exactly what I needed."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:#c8a951">SK</div>
+        <div>
+          <div class="author-name">Sarah K.</div>
+          <div class="author-role">Web Designer</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"My clients actually comment on how professional my invoices look now. DraftPaid's design beats everything I've tried — and I've tried a lot. The pricing is fair too."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:#2c3e50">TL</div>
+        <div>
+          <div class="author-name">Tom L.</div>
+          <div class="author-role">Marketing Consultant</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="section" id="faq">
+  <div class="section-label">Questions</div>
+  <h2 class="section-title" style="text-align:center">Frequently asked <em>questions.</em></h2>
+  <p class="section-sub" style="margin:0 auto 3rem;text-align:center">If you have a question not answered here, email us at hello@draftpaid.com</p>
+
+  <div class="faq-grid">
+    <div class="faq-item">
+      <div class="faq-question">
+        Do I really need to create an account?
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">No — never, on the free plan. Open DraftPaid, create your invoice, download your PDF. No email, no password, no sign-up. We built DraftPaid specifically because we were frustrated by tools that gate basic features behind accounts.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        Are there watermarks on free invoices?
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">No watermarks — ever. Free invoices include a small "Created with DraftPaid" credit line in the footer. It's discreet, professional-looking, and nothing like the giant stamps other tools plaster across your work. Upgrade to Pro to remove it entirely and send 100% unbranded invoices.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        Where is my invoice data stored?
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">By default, your invoice data lives in your browser on your own device. We don't send it to our servers unless you create a Pro account and choose to enable cloud sync. Your financial information is your business — literally.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        Will my pricing change if DraftPaid raises prices later?
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">Never for existing users. We make a public promise: if you sign up at $9/month, you stay at $9/month — forever. We've seen too many tools pull bait-and-switch pricing increases on loyal users. We won't do that.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        Can I accept online payments through DraftPaid?
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">Online payment acceptance via Stripe and PayPal is a Pro feature coming soon. Free users can download and send PDF invoices, which clients can pay through their own preferred method.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        What currencies does DraftPaid support?
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">DraftPaid currently supports USD, EUR, GBP, CAD, and JPY. More currencies are being added regularly. If you need a specific currency, email us and we'll prioritize it.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ── -->
+<section class="cta-section">
+  <div class="section-label">Get started today</div>
+  <h2 class="cta-title">Stop overthinking it.<br><em>Make your invoice now.</em></h2>
+  <p class="cta-sub">No account. No credit card. No invoice watermarks. Just a professional invoice in 30 seconds — completely free.</p>
+  <a href="invoice-generator.html" class="btn-hero btn-hero-primary" style="font-size:1rem;padding:1rem 2.5rem;">
+    Get Started — No Account Needed →
+  </a>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-brand">
+    <div class="footer-logo"><span>Draft</span>Paid</div>
+    <p class="footer-tagline">Professional invoices in 30 seconds. No account needed, no stamps on your invoice, no tricks. Built for freelancers who just want to get paid.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Product</h4>
+    <a href="invoice-generator.html">Invoice Generator</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="draftpaid-templates.html">Templates</a>
+  </div>
+  <div class="footer-col">
+    <h4>Resources</h4>
+    <a href="draftpaid-templates.html">Invoice Templates</a>
+    <a href="#">Blog</a>
+    <a href="#how">How it Works</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <div class="footer-col">
+    <h4>Company</h4>
+    <a href="#">About</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="mailto:hello@draftpaid.io">Contact</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2026 DraftPaid. All rights reserved.</span>
+  <span>Made with ♥ for freelancers everywhere</span>
+</div>
+
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-question').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feature-card, .step, .price-card, .testimonial, .faq-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
