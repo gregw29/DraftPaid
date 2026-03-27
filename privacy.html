@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy — DraftPaid</title>
+  <meta name="description" content="DraftPaid's privacy policy. I believe in radical transparency about how we handle your data."/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M1Q2BRZ5VS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-M1Q2BRZ5VS');
+  </script>
+  <style>
+    :root {
+      --ink:    #0a0908;
+      --off:    #f7f4ef;
+      --cream:  #ede9de;
+      --gold:   #c8a951;
+      --gold-lt:#e8d48e;
+      --muted:  #6b6560;
+      --border: #ddd9d0;
+      --white:  #ffffff;
+      --r: 8px;
+      --font-d: "Playfair Display", Georgia, serif;
+      --font-b: "Outfit", sans-serif;
+      --font-m: "JetBrains Mono", monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-b); background: var(--off); color: var(--ink); }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 60px;
+      background: rgba(247,244,239,.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-d); font-size: 1.3rem; text-decoration: none; color: var(--ink); }
+    .nav-logo span { color: var(--gold); font-style: italic; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { font-size: .85rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      background: var(--ink); color: var(--off) !important;
+      padding: .5rem 1.2rem; border-radius: var(--r);
+      font-size: .82rem !important; font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--gold) !important; color: var(--ink) !important; }
+
+    .page-hero {
+      background: var(--ink); color: var(--off);
+      padding: 80px 5% 60px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(200,169,81,.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-label {
+      font-family: var(--font-m); font-size: .7rem;
+      color: var(--gold-lt); letter-spacing: .14em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .page-hero h1 {
+      font-family: var(--font-d); font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900; margin-bottom: 1rem;
+    }
+    .page-hero h1 em { color: var(--gold); font-style: italic; }
+    .page-hero p {
+      font-size: 1rem; color: rgba(247,244,239,.65);
+      max-width: 560px; margin: 0 auto; line-height: 1.7;
+    }
+
+    .content {
+      max-width: 720px; margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+    }
+    .last-updated {
+      font-family: var(--font-m); font-size: .72rem;
+      color: var(--muted); letter-spacing: .06em;
+      margin-bottom: 2rem;
+    }
+    .section { margin-bottom: 2.5rem; }
+    .section h2 {
+      font-family: var(--font-d); font-size: 1.4rem;
+      font-weight: 700; margin-bottom: 1rem;
+      color: var(--ink);
+    }
+    .section p {
+      font-size: .93rem; color: var(--muted);
+      line-height: 1.8; margin-bottom: .9rem;
+    }
+    .section p strong { color: var(--ink); }
+    .section ul {
+      list-style: none; margin-bottom: 1rem;
+    }
+    .section ul li {
+      font-size: .93rem; color: var(--muted);
+      line-height: 1.8; padding: .3rem 0;
+      padding-left: 1.2rem; position: relative;
+    }
+    .section ul li::before {
+      content: '→'; color: var(--gold);
+      position: absolute; left: 0;
+    }
+    .highlight-box {
+      background: var(--cream); border-left: 3px solid var(--gold);
+      border-radius: 0 var(--r) var(--r) 0;
+      padding: 1.25rem 1.5rem; margin-bottom: 2rem;
+    }
+    .highlight-box p {
+      font-size: .93rem; color: var(--ink);
+      line-height: 1.7; margin: 0;
+    }
+    .legal-nav {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 3rem; padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .legal-nav a {
+      font-family: var(--font-m); font-size: .75rem;
+      color: var(--muted); text-decoration: none;
+      border: 1px solid var(--border); border-radius: 99px;
+      padding: .3rem .9rem; letter-spacing: .04em;
+      transition: all .2s;
+    }
+    .legal-nav a:hover, .legal-nav a.active {
+      border-color: var(--gold); color: var(--gold);
+    }
+    footer {
+      background: #07060a; color: rgba(247,244,239,.4);
+      padding: 2rem 5%; text-align: center;
+      font-family: var(--font-m); font-size: .72rem;
+      letter-spacing: .06em;
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>Draft</span>Paid</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="draftpaid-templates.html">Templates</a>
+    <a href="invoice-generator.html" class="nav-cta">Create Invoice →</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="hero-label">Privacy Policy</div>
+  <h1>Your data is <em>your business.</em></h1>
+  <p>I built DraftPaid with privacy as a core feature — not an afterthought. Here's exactly what we collect, what we don't, and why.</p>
+</div>
+
+<div class="content">
+
+  <div class="legal-nav">
+    <a href="about.html">About</a>
+    <a href="privacy.html" class="active">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+  </div>
+
+  <div class="last-updated">Last updated: March 27, 2026</div>
+
+  <div class="highlight-box">
+    <p><strong>The short version:</strong> DraftPaid stores your invoice data in your own browser by default. I don't sell your data, I don't share it with advertisers, and I never will. The only data I collect is anonymous analytics to understand how the product is used.</p>
+  </div>
+
+  <div class="section">
+    <h2>1. What I Collect</h2>
+    <p><strong>Invoice data (stored locally in your browser):</strong> When you create an invoice on DraftPaid, all data you enter — business name, client details, line items, amounts — is stored in your browser's local storage. This data never leaves your device unless you choose to create a Pro account with cloud sync enabled.</p>
+    <p><strong>Anonymous analytics:</strong> I use Google Analytics to understand how people use DraftPaid. This includes pages visited, time on page, general location (country/city level), and device type. This data is anonymous and cannot be used to identify you personally.</p>
+    <p><strong>Invoice usage counter:</strong> I store a simple counter in your browser's local storage to track how many invoices you've generated this month. This stays on your device — I don't see it.</p>
+  </div>
+
+  <div class="section">
+    <h2>2. What I Don't Collect</h2>
+    <ul>
+      <li>I don't collect your name, email, or any personal information unless you voluntarily contact us</li>
+      <li>I don't collect your invoice data — it stays in your browser</li>
+      <li>I don't collect payment information — I never process payments directly</li>
+      <li>I don't use advertising cookies or tracking pixels</li>
+      <li>I don't sell your data to any third party — ever</li>
+      <li>I don't share your data with advertisers</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>3. Cookies</h2>
+    <p>DraftPaid uses minimal cookies. I use browser local storage (not traditional cookies) to remember your invoice counter and any data you've entered in the invoice generator. Google Analytics uses its own cookies for anonymous analytics tracking.</p>
+    <p>You can clear your browser's local storage at any time to reset all DraftPaid data on your device.</p>
+  </div>
+
+  <div class="section">
+    <h2>4. Google Analytics</h2>
+    <p>I use Google Analytics (GA4) to understand how visitors use DraftPaid. Google Analytics collects anonymous data including pages visited, session duration, general geographic location, and device/browser type. This data is processed by Google in accordance with their privacy policy.</p>
+    <p>You can opt out of Google Analytics tracking by using the <a href="https://tools.google.com/dlpage/gaoptout" style="color:var(--gold)">Google Analytics Opt-out Browser Add-on</a>.</p>
+  </div>
+
+  <div class="section">
+    <h2>5. Pro Accounts (Coming Soon)</h2>
+    <p>When DraftPaid Pro accounts launch, users who choose to create an account will have their invoice data optionally synced to my secure cloud storage. This will be strictly opt-in. Free users will always be able to use DraftPaid without an account and without any data leaving their device.</p>
+  </div>
+
+  <div class="section">
+    <h2>6. Third Party Services</h2>
+    <p>DraftPaid uses the following third party services:</p>
+    <ul>
+      <li><strong>Google Analytics</strong> — anonymous usage analytics</li>
+      <li><strong>Vercel</strong> — website hosting and delivery</strong></li>
+      <li><strong>Google Fonts</strong> — typography (Playfair Display, Outfit, JetBrains Mono)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>7. Children's Privacy</h2>
+    <p>DraftPaid is not directed at children under 13. I do not knowingly collect any personal information from children under 13. If you believe a child has provided me with personal information, please contact me immediately.</p>
+  </div>
+
+  <div class="section">
+    <h2>8. Changes to This Policy</h2>
+    <p>I may update this privacy policy from time to time. When I do, I'll update the "Last updated" date at the top of this page. I'll never make changes that reduce your privacy protections without clearly communicating them.</p>
+  </div>
+
+  <div class="section">
+    <h2>9. Email Me</h2>
+    <p>Questions about this privacy policy? Email me at <a href="mailto:draftpaid@gmail.com" style="color:var(--gold)">draftpaid@gmail.com</a>. I read every email personally and will respond within 48 hours.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 DraftPaid. Built with ♥ in San Diego, CA. &nbsp;|&nbsp;
+  <a href="index.html">Home</a> &nbsp;|&nbsp;
+  <a href="about.html">About</a> &nbsp;|&nbsp;
+  <a href="terms.html">Terms</a> &nbsp;|&nbsp;
+  <a href="mailto:draftpaid@gmail.com">Contact</a>
+  </p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — DraftPaid</title>
+  <meta name="description" content="DraftPaid is a free professional invoice generator built by a college student and ex-mechanic who got tired of overcomplicated invoicing tools."/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M1Q2BRZ5VS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-M1Q2BRZ5VS');
+  </script>
+  <style>
+    :root {
+      --ink:    #0a0908;
+      --off:    #f7f4ef;
+      --cream:  #ede9de;
+      --gold:   #c8a951;
+      --gold-lt:#e8d48e;
+      --muted:  #6b6560;
+      --border: #ddd9d0;
+      --white:  #ffffff;
+      --r: 8px;
+      --font-d: "Playfair Display", Georgia, serif;
+      --font-b: "Outfit", sans-serif;
+      --font-m: "JetBrains Mono", monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-b); background: var(--off); color: var(--ink); }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 60px;
+      background: rgba(247,244,239,.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-d); font-size: 1.3rem; text-decoration: none; color: var(--ink); }
+    .nav-logo span { color: var(--gold); font-style: italic; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { font-size: .85rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      background: var(--ink); color: var(--off) !important;
+      padding: .5rem 1.2rem; border-radius: var(--r);
+      font-size: .82rem !important; font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--gold) !important; color: var(--ink) !important; }
+
+    .page-hero {
+      background: var(--ink); color: var(--off);
+      padding: 80px 5% 60px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(200,169,81,.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-label {
+      font-family: var(--font-m); font-size: .7rem;
+      color: var(--gold-lt); letter-spacing: .14em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .page-hero h1 {
+      font-family: var(--font-d); font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900; margin-bottom: 1rem;
+    }
+    .page-hero h1 em { color: var(--gold); font-style: italic; }
+    .page-hero p {
+      font-size: 1rem; color: rgba(247,244,239,.65);
+      max-width: 560px; margin: 0 auto; line-height: 1.7;
+    }
+
+    .content {
+      max-width: 720px; margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+    }
+    .section { margin-bottom: 3rem; }
+    .section h2 {
+      font-family: var(--font-d); font-size: 1.6rem;
+      font-weight: 700; margin-bottom: 1rem;
+      padding-bottom: .75rem;
+      border-bottom: 2px solid var(--gold);
+      display: inline-block;
+    }
+    .section p {
+      font-size: .95rem; color: var(--muted);
+      line-height: 1.8; margin-bottom: 1rem;
+    }
+    .section p strong { color: var(--ink); }
+    .section ul {
+      list-style: none; margin-bottom: 1rem;
+    }
+    .section ul li {
+      font-size: .95rem; color: var(--muted);
+      line-height: 1.8; padding: .3rem 0;
+      padding-left: 1.2rem; position: relative;
+    }
+    .section ul li::before {
+      content: '→'; color: var(--gold);
+      position: absolute; left: 0;
+    }
+
+    .founder-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+      display: flex; gap: 1.5rem; align-items: flex-start;
+      margin-bottom: 2rem;
+    }
+    .founder-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--ink); color: var(--gold-lt);
+      font-family: var(--font-d); font-size: 1.5rem;
+      font-weight: 900; display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+    }
+    .founder-name {
+      font-family: var(--font-d); font-size: 1.2rem;
+      font-weight: 700; margin-bottom: .25rem;
+    }
+    .founder-role {
+      font-family: var(--font-m); font-size: .72rem;
+      color: var(--gold); letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: .75rem;
+    }
+    .founder-bio {
+      font-size: .9rem; color: var(--muted); line-height: 1.7;
+    }
+
+    .promise-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin-top: 1.5rem;
+    }
+    .promise-item {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.25rem;
+    }
+    .promise-icon { font-size: 1.5rem; margin-bottom: .5rem; display: block; }
+    .promise-title { font-weight: 600; font-size: .9rem; margin-bottom: .3rem; }
+    .promise-desc { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+
+    .contact-box {
+      background: var(--ink); color: var(--off);
+      border-radius: 12px; padding: 2rem;
+      text-align: center; margin-top: 2rem;
+    }
+    .contact-box h3 {
+      font-family: var(--font-d); font-size: 1.4rem;
+      margin-bottom: .75rem; color: var(--gold-lt);
+    }
+    .contact-box p { font-size: .9rem; color: rgba(247,244,239,.65); margin-bottom: 1.25rem; }
+    .contact-box a {
+      display: inline-block; background: var(--gold);
+      color: var(--ink); padding: .75rem 2rem;
+      border-radius: var(--r); font-weight: 600;
+      text-decoration: none; font-size: .9rem;
+      transition: background .2s;
+    }
+    .contact-box a:hover { background: #b8932e; }
+
+    .legal-nav {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 3rem; padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .legal-nav a {
+      font-family: var(--font-m); font-size: .75rem;
+      color: var(--muted); text-decoration: none;
+      border: 1px solid var(--border); border-radius: 99px;
+      padding: .3rem .9rem; letter-spacing: .04em;
+      transition: all .2s;
+    }
+    .legal-nav a:hover, .legal-nav a.active {
+      border-color: var(--gold); color: var(--gold);
+    }
+
+    footer {
+      background: #07060a; color: rgba(247,244,239,.4);
+      padding: 2rem 5%; text-align: center;
+      font-family: var(--font-m); font-size: .72rem;
+      letter-spacing: .06em;
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+
+    @media (max-width: 640px) {
+      .promise-grid { grid-template-columns: 1fr; }
+      .founder-card { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>Draft</span>Paid</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="draftpaid-templates.html">Templates</a>
+    <a href="invoice-generator.html" class="nav-cta">Create Invoice →</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="hero-label">About DraftPaid</div>
+  <h1>Built by someone who <em>needed it.</em></h1>
+  <p>DraftPaid wasn't built in a boardroom. It was built out of frustration by a mechanic who got tired of overcomplicated invoicing tools.</p>
+</div>
+
+<div class="content">
+
+  <div class="legal-nav">
+    <a href="about.html" class="active">About</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+  </div>
+
+  <div class="section">
+    <h2>The Story</h2>
+    <p>Before college, I spent years working as a mechanic. I still do side work for friends and family — fixing cars, doing jobs for people. Every time I finished a job I needed to send an invoice. Simple enough, right?</p>
+    <p>Wrong. Every free tool I tried either wanted me to <strong>create an account</strong> just to download one PDF, slapped a giant watermark across my work, or was so bloated with accounting features I didn't need that it took longer to figure out the software than to do the actual job.</p>
+    <p>So when I started studying Computer Science in college, I built the tool I always wanted. Something dead simple. Open it, fill it in, download it. No account. No watermarks on the invoice. Done in under a minute.</p>
+    <p>That's DraftPaid. It started as a college project and turned into something I genuinely use and believe in.</p>
+  </div>
+
+  <div class="section">
+    <h2>Meet the Founder</h2>
+    <div class="founder-card">
+      <div class="founder-avatar">G</div>
+      <div>
+        <div class="founder-name">Greg W.</div>
+        <div class="founder-role">Founder & Builder</div>
+        <div class="founder-bio">
+          CS student, ex-mechanic, solo founder. Building DraftPaid because every freelancer and tradesperson deserves a professional invoice tool that doesn't make them jump through hoops. Based in San Diego, CA.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>My Promises</h2>
+    <p>I make four promises to every DraftPaid user — free or paid. These aren't buried in fine print. They're the foundation of everything we build.</p>
+    <div class="promise-grid">
+      <div class="promise-item">
+        <span class="promise-icon">⚡</span>
+        <div class="promise-title">No account required — ever</div>
+        <div class="promise-desc">Free users never need to create an account. Open DraftPaid and start invoicing immediately.</div>
+      </div>
+      <div class="promise-item">
+        <span class="promise-icon">🔒</span>
+        <div class="promise-title">Your data stays private</div>
+        <div class="promise-desc">Invoice data lives in your browser by default. We don't store your financial information on my servers.</div>
+      </div>
+      <div class="promise-item">
+        <span class="promise-icon">💰</span>
+        <div class="promise-title">Grandfathered pricing</div>
+        <div class="promise-desc">If you sign up at $9/month, you stay at $9/month — forever. No surprise price hikes for existing users.</div>
+      </div>
+      <div class="promise-item">
+        <span class="promise-icon">🤝</span>
+        <div class="promise-title">I never hold your money</div>
+        <div class="promise-desc">DraftPaid generates your invoice. When clients pay online, funds go straight to your bank via Stripe — never through us. No holds, no delays, no surprises.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>What I'm Building</h2>
+    <p>DraftPaid is early stage. Here's what's live today and what's coming:</p>
+    <ul>
+      <li>Free invoice generator — no account required</li>
+      <li>12 profession-specific templates (mechanic, photographer, developer and more)</li>
+      <li>Real one-click PDF download</li>
+      <li>Multi-currency support</li>
+      <li>Pro plan with unlimited invoices ($9/month) — coming soon</li>
+      <li>Recurring invoices and payment reminders — coming soon</li>
+      <li>Let clients pay invoices online — funds go straight to your bank via Stripe, never held by us — coming soon</li>
+    </ul>
+  </div>
+
+  <div class="contact-box">
+    <h3>Get in touch</h3>
+    <p>Questions, feedback, or just want to say hi? I read every email personally.</p>
+    <a href="mailto:draftpaid@gmail.com">draftpaid@gmail.com</a>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 DraftPaid. Built with ♥ in San Diego, CA. &nbsp;|&nbsp;
+  <a href="index.html">Home</a> &nbsp;|&nbsp;
+  <a href="privacy.html">Privacy</a> &nbsp;|&nbsp;
+  <a href="terms.html">Terms</a> &nbsp;|&nbsp;
+  <a href="mailto:draftpaid@gmail.com">Contact</a>
+  </p>
+</footer>
+
+</body>
+</html>

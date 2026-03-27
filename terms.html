@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terms of Service — DraftPaid</title>
+  <meta name="description" content="DraftPaid's terms of service. Plain English, no legal jargon."/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M1Q2BRZ5VS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-M1Q2BRZ5VS');
+  </script>
+  <style>
+    :root {
+      --ink:    #0a0908;
+      --off:    #f7f4ef;
+      --cream:  #ede9de;
+      --gold:   #c8a951;
+      --gold-lt:#e8d48e;
+      --muted:  #6b6560;
+      --border: #ddd9d0;
+      --white:  #ffffff;
+      --r: 8px;
+      --font-d: "Playfair Display", Georgia, serif;
+      --font-b: "Outfit", sans-serif;
+      --font-m: "JetBrains Mono", monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-b); background: var(--off); color: var(--ink); }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 60px;
+      background: rgba(247,244,239,.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-d); font-size: 1.3rem; text-decoration: none; color: var(--ink); }
+    .nav-logo span { color: var(--gold); font-style: italic; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { font-size: .85rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      background: var(--ink); color: var(--off) !important;
+      padding: .5rem 1.2rem; border-radius: var(--r);
+      font-size: .82rem !important; font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--gold) !important; color: var(--ink) !important; }
+
+    .page-hero {
+      background: var(--ink); color: var(--off);
+      padding: 80px 5% 60px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(200,169,81,.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-label {
+      font-family: var(--font-m); font-size: .7rem;
+      color: var(--gold-lt); letter-spacing: .14em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .page-hero h1 {
+      font-family: var(--font-d); font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900; margin-bottom: 1rem;
+    }
+    .page-hero h1 em { color: var(--gold); font-style: italic; }
+    .page-hero p {
+      font-size: 1rem; color: rgba(247,244,239,.65);
+      max-width: 560px; margin: 0 auto; line-height: 1.7;
+    }
+
+    .content {
+      max-width: 720px; margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+    }
+    .last-updated {
+      font-family: var(--font-m); font-size: .72rem;
+      color: var(--muted); letter-spacing: .06em;
+      margin-bottom: 2rem;
+    }
+    .section { margin-bottom: 2.5rem; }
+    .section h2 {
+      font-family: var(--font-d); font-size: 1.4rem;
+      font-weight: 700; margin-bottom: 1rem;
+    }
+    .section p {
+      font-size: .93rem; color: var(--muted);
+      line-height: 1.8; margin-bottom: .9rem;
+    }
+    .section p strong { color: var(--ink); }
+    .section ul {
+      list-style: none; margin-bottom: 1rem;
+    }
+    .section ul li {
+      font-size: .93rem; color: var(--muted);
+      line-height: 1.8; padding: .3rem 0;
+      padding-left: 1.2rem; position: relative;
+    }
+    .section ul li::before {
+      content: '→'; color: var(--gold);
+      position: absolute; left: 0;
+    }
+    .highlight-box {
+      background: var(--cream); border-left: 3px solid var(--gold);
+      border-radius: 0 var(--r) var(--r) 0;
+      padding: 1.25rem 1.5rem; margin-bottom: 2rem;
+    }
+    .highlight-box p {
+      font-size: .93rem; color: var(--ink);
+      line-height: 1.7; margin: 0;
+    }
+    .legal-nav {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 3rem; padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .legal-nav a {
+      font-family: var(--font-m); font-size: .75rem;
+      color: var(--muted); text-decoration: none;
+      border: 1px solid var(--border); border-radius: 99px;
+      padding: .3rem .9rem; letter-spacing: .04em;
+      transition: all .2s;
+    }
+    .legal-nav a:hover, .legal-nav a.active {
+      border-color: var(--gold); color: var(--gold);
+    }
+    footer {
+      background: #07060a; color: rgba(247,244,239,.4);
+      padding: 2rem 5%; text-align: center;
+      font-family: var(--font-m); font-size: .72rem;
+      letter-spacing: .06em;
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>Draft</span>Paid</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="draftpaid-templates.html">Templates</a>
+    <a href="invoice-generator.html" class="nav-cta">Create Invoice →</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="hero-label">Terms of Service</div>
+  <h1>Plain English. <em>No jargon.</em></h1>
+  <p>I wrote these terms to actually be readable. If something is unclear, email us and I'll explain it in plain English.</p>
+</div>
+
+<div class="content">
+
+  <div class="legal-nav">
+    <a href="about.html">About</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html" class="active">Terms of Service</a>
+  </div>
+
+  <div class="last-updated">Last updated: March 27, 2026</div>
+
+  <div class="highlight-box">
+    <p><strong>The short version:</strong> Use DraftPaid to create professional invoices. Don't use it for anything illegal or harmful. I provide the tool as-is and aren't responsible for how you use it. That's pretty much it.</p>
+  </div>
+
+  <div class="section">
+    <h2>1. Acceptance of Terms</h2>
+    <p>By using DraftPaid at draftpaid.com, you agree to these terms. If you don't agree, please don't use the service. These terms apply to all visitors and users of DraftPaid.</p>
+  </div>
+
+  <div class="section">
+    <h2>2. What DraftPaid Is</h2>
+    <p>DraftPaid is a web-based invoice generator. It lets you create professional PDF invoices for your business or freelance work. I am not an accounting platform, a payment processor, or a financial services company.</p>
+    <p><strong>Important:</strong> DraftPaid generates invoice documents only. I do not process, hold, or facilitate any payments between you and your clients. How you receive payment from your clients is entirely up to you.</p>
+  </div>
+
+  <div class="section">
+    <h2>3. Free Plan</h2>
+    <p>DraftPaid's free plan allows you to generate up to 5 invoices per month without creating an account. Free invoices include a small "Created with DraftPaid" footer credit. The free plan is provided as-is with no guarantee of availability or uptime.</p>
+  </div>
+
+  <div class="section">
+    <h2>4. Pro Plan (Coming Soon)</h2>
+    <p>When the Pro plan launches at $9/month, the following terms apply:</p>
+    <ul>
+      <li>Subscriptions are billed monthly and can be cancelled at any time</li>
+      <li>If you cancel, you retain Pro access until the end of your billing period</li>
+      <li>I will never raise prices on existing subscribers — your rate is locked forever</li>
+      <li>Refunds are available within 7 days of any charge if you contact us</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>5. Acceptable Use</h2>
+    <p>You may use DraftPaid to create invoices for legitimate business purposes. You agree not to use DraftPaid to:</p>
+    <ul>
+      <li>Create fraudulent or fake invoices</li>
+      <li>Engage in any illegal activity</li>
+      <li>Attempt to hack, disrupt, or damage the service</li>
+      <li>Scrape or automate requests to the service without permission</li>
+      <li>Impersonate another person or business</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>6. Your Data</h2>
+    <p>Invoice data you enter into DraftPaid is stored in your own browser's local storage by default. You own your data. I don't claim any rights over the invoices you create. See our <a href="privacy.html" style="color:var(--gold)">Privacy Policy</a> for full details on data handling.</p>
+  </div>
+
+  <div class="section">
+    <h2>7. Intellectual Property</h2>
+    <p>The DraftPaid name, logo, and website design are my intellectual property. The invoices you create using DraftPaid belong entirely to you. You retain full ownership of any content you create using my tool.</p>
+  </div>
+
+  <div class="section">
+    <h2>8. Disclaimer of Warranties</h2>
+    <p>DraftPaid is provided "as is" without any warranty of any kind. I don't guarantee the service will always be available, error-free, or meet your specific requirements. I am a small early-stage product and do my best to keep things running smoothly.</p>
+  </div>
+
+  <div class="section">
+    <h2>9. Limitation of Liability</h2>
+    <p>DraftPaid is not liable for any damages arising from your use of the service, including but not limited to lost revenue, lost data, or business interruption. My total liability to you will not exceed the amount you paid us in the last 12 months.</p>
+  </div>
+
+  <div class="section">
+    <h2>10. Changes to These Terms</h2>
+    <p>I may update these terms from time to time. I'll always update the "Last updated" date at the top. If I make significant changes I'll make reasonable efforts to notify users. Continued use of DraftPaid after changes means you accept the new terms.</p>
+  </div>
+
+  <div class="section">
+    <h2>11. Contact</h2>
+    <p>Questions about these terms? Email us at <a href="mailto:draftpaid@gmail.com" style="color:var(--gold)">draftpaid@gmail.com</a>. I'm a solo founder and read every email personally.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 DraftPaid. Built with ♥ in San Diego, CA. &nbsp;|&nbsp;
+  <a href="index.html">Home</a> &nbsp;|&nbsp;
+  <a href="about.html">About</a> &nbsp;|&nbsp;
+  <a href="privacy.html">Privacy</a> &nbsp;|&nbsp;
+  <a href="mailto:draftpaid@gmail.com">Contact</a>
+  </p>
+</footer>
+
+</body>
+</html>
