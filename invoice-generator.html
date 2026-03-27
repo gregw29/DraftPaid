@@ -255,9 +255,103 @@
     .totals-row.grand .label { color: var(--gold-lt); font-size: .78rem; }
     .totals-row.grand .value { color: var(--gold-lt); font-size: 1.05rem; }
 
-    /* ── PREVIEW PANEL ── */
-    #preview-section { display: none; }
-    #preview-section.visible { display: block; }
+    /* ── INVOICE COUNTER ── */
+    .invoice-counter {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      color: rgba(247,244,239,.45);
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+    .invoice-counter.near-limit { color: var(--gold-lt); }
+
+    /* ── PREVIEW MODAL ── */
+    .preview-modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(15,14,12,.75);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem;
+      overflow-y: auto;
+    }
+    .preview-modal-overlay.hidden { display: none; }
+    .preview-modal-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      width: 100%; max-width: 800px;
+      position: relative; margin-bottom: 2rem;
+    }
+    .preview-modal-header {
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+      padding: .9rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .preview-modal-header h2 {
+      font-family: var(--font-mono);
+      font-size: .72rem; font-weight: 500;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+    }
+    .preview-modal-body { padding: 1.5rem; }
+    .preview-modal-footer {
+      border-top: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex; justify-content: flex-end; gap: .75rem;
+    }
+    .modal-close-btn {
+      background: var(--cream); border: 1.5px solid var(--border);
+      border-radius: var(--radius); width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: .85rem; color: var(--muted);
+      transition: all .15s; flex-shrink: 0;
+    }
+    .modal-close-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+    /* ── UPGRADE MODAL ── */
+    .upgrade-modal-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(15,14,12,.75);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    .upgrade-modal-overlay.hidden { display: none; }
+    .upgrade-modal-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      padding: 2.5rem 2rem;
+      max-width: 460px; width: 100%;
+      text-align: center;
+    }
+    .upgrade-modal-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .upgrade-modal-title {
+      font-family: var(--font-head);
+      font-size: 1.4rem; font-weight: 700;
+      margin-bottom: .75rem; color: var(--ink); line-height: 1.3;
+    }
+    .upgrade-modal-body {
+      font-size: .92rem; color: var(--muted);
+      line-height: 1.65; margin-bottom: 1.75rem;
+    }
+    .upgrade-modal-actions { display: flex; flex-direction: column; gap: .75rem; }
+    .btn-upgrade {
+      background: var(--gold); color: var(--ink);
+      padding: .85rem; border-radius: var(--radius);
+      font-family: var(--font-body); font-size: .9rem;
+      font-weight: 600; border: none; cursor: pointer;
+      transition: all .18s; letter-spacing: .02em;
+      text-decoration: none; display: block;
+    }
+    .btn-upgrade:hover { background: #b8942f; transform: translateY(-1px); }
+    .btn-later {
+      background: transparent; border: none;
+      color: var(--muted); font-size: .85rem;
+      cursor: pointer; font-family: var(--font-body);
+      padding: .5rem; transition: color .15s;
+    }
+    .btn-later:hover { color: var(--ink); }
 
     .invoice-preview {
       background: var(--white);
@@ -376,7 +470,7 @@
     }
 
     @media print {
-      header, #editor-section, .header-actions, #preview-section .card-header { display: none !important; }
+      header, #editor-section, .preview-modal-header, .preview-modal-footer { display: none !important; }
       body { background: white; }
       .invoice-preview { box-shadow: none; border: none; }
     }
@@ -386,8 +480,9 @@
 
 <header>
   <div class="logo"><span>Draft</span>Paid</div>
+  <span class="invoice-counter" id="invoice-counter"></span>
   <div class="header-actions">
-    <button class="btn btn-outline" onclick="togglePreview()">👁 Preview</button>
+    <button class="btn btn-outline" onclick="openPreviewModal()">👁 Preview Invoice</button>
     <button class="btn btn-primary" onclick="downloadPDF()">⬇ Download PDF</button>
   </div>
 </header>
@@ -527,17 +622,37 @@
 
   </div><!-- end editor -->
 
-  <!-- ── PREVIEW ── -->
-  <div id="preview-section">
-    <div class="card">
-      <div class="card-header"><div class="card-dot"></div><h2>Invoice Preview</h2></div>
-      <div class="card-body">
-        <div class="invoice-preview" id="invoice-preview"></div>
-      </div>
+</div><!-- end app -->
+
+<!-- ── PREVIEW MODAL ── -->
+<div class="preview-modal-overlay hidden" id="preview-modal-overlay">
+  <div class="preview-modal-card">
+    <div class="preview-modal-header">
+      <h2>Invoice Preview</h2>
+      <button class="modal-close-btn" onclick="closePreviewModal()" title="Close">✕</button>
+    </div>
+    <div class="preview-modal-body">
+      <div class="invoice-preview" id="invoice-preview"></div>
+    </div>
+    <div class="preview-modal-footer">
+      <button class="btn btn-outline" onclick="closePreviewModal()">Close</button>
+      <button class="btn btn-primary" onclick="downloadPDF()">⬇ Download PDF</button>
     </div>
   </div>
+</div>
 
-</div><!-- end app -->
+<!-- ── UPGRADE MODAL ── -->
+<div class="upgrade-modal-overlay hidden" id="upgrade-modal-overlay">
+  <div class="upgrade-modal-card">
+    <div class="upgrade-modal-icon">🚀</div>
+    <div class="upgrade-modal-title">You've used all 5 free invoices this month</div>
+    <p class="upgrade-modal-body">Upgrade to DraftPaid Pro for unlimited invoices, recurring billing, payment reminders, and more — all for just $9/month.</p>
+    <div class="upgrade-modal-actions">
+      <a href="index.html#pricing" class="btn-upgrade">Upgrade to Pro — $9/month →</a>
+      <button class="btn-later" onclick="closeUpgradeModal()">Maybe later</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -622,6 +737,17 @@
     ['from-name','from-email','from-address','to-name','to-email','to-address'].forEach(id => {
       document.getElementById(id)?.addEventListener("input", saveUserData);
     });
+
+    // Invoice counter
+    updateCounterDisplay();
+
+    // Close modals when clicking the backdrop
+    document.getElementById("preview-modal-overlay").addEventListener("click", e => {
+      if (e.target === e.currentTarget) closePreviewModal();
+    });
+    document.getElementById("upgrade-modal-overlay").addEventListener("click", e => {
+      if (e.target === e.currentTarget) closeUpgradeModal();
+    });
   });
 
   function fmt(d) {
@@ -688,15 +814,16 @@
     document.getElementById("total-display").textContent    = cur + total.toFixed(2);
   }
 
-  /* ── PREVIEW ── */
-  function togglePreview() {
-    const section = document.getElementById("preview-section");
-    const editor  = document.getElementById("editor-section");
-    const showing = section.classList.toggle("visible");
-    if (showing) {
-      buildPreview();
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+  /* ── PREVIEW MODAL ── */
+  function openPreviewModal() {
+    buildPreview();
+    document.getElementById("preview-modal-overlay").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closePreviewModal() {
+    document.getElementById("preview-modal-overlay").classList.add("hidden");
+    document.body.style.overflow = "";
   }
 
   function buildPreview() {
@@ -781,10 +908,44 @@
     `;
   }
 
+  /* ── INVOICE COUNTER ── */
+  function getInvoiceCount() {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    if (localStorage.getItem('draftpaid_invoice_month') !== currentMonth) {
+      localStorage.setItem('draftpaid_invoice_month', currentMonth);
+      localStorage.setItem('draftpaid_invoice_count', '0');
+    }
+    return parseInt(localStorage.getItem('draftpaid_invoice_count') || '0', 10);
+  }
+
+  function incrementInvoiceCount() {
+    const next = getInvoiceCount() + 1;
+    localStorage.setItem('draftpaid_invoice_count', String(next));
+    updateCounterDisplay();
+  }
+
+  function updateCounterDisplay() {
+    const count = getInvoiceCount();
+    const el = document.getElementById("invoice-counter");
+    if (!el) return;
+    el.textContent = `${count} of 5 free invoices used this month`;
+    el.classList.toggle("near-limit", count >= 4);
+  }
+
+  function closeUpgradeModal() {
+    document.getElementById("upgrade-modal-overlay").classList.add("hidden");
+  }
+
   /* ── PDF DOWNLOAD ── */
   async function downloadPDF() {
+    if (getInvoiceCount() >= 5) {
+      closePreviewModal();
+      document.getElementById("upgrade-modal-overlay").classList.remove("hidden");
+      return;
+    }
     buildPreview();
-    document.getElementById("preview-section").classList.add("visible");
+    document.getElementById("preview-modal-overlay").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
     try {
       const { jsPDF } = window.jspdf;
       const element = document.getElementById("invoice-preview");
@@ -800,14 +961,16 @@
         let posY = 0, rem = imgH;
         while (rem > 0) {
           pdf.addImage(imgData, 'PNG', 0, posY, pageW, imgH);
-          rem  -= pageH;
-          posY -= pageH;
+          rem -= pageH; posY -= pageH;
           if (rem > 0) pdf.addPage();
         }
       }
       pdf.save("DraftPaid-Invoice.pdf");
+      incrementInvoiceCount();
+      closePreviewModal();
       toast("✓ Invoice downloaded!");
     } catch(e) {
+      closePreviewModal();
       toast("Download failed — try Print instead.");
       console.error(e);
     }
@@ -815,7 +978,7 @@
 
   function printInvoice() {
     buildPreview();
-    document.getElementById("preview-section").classList.add("visible");
+    openPreviewModal();
     setTimeout(() => window.print(), 200);
   }
 
