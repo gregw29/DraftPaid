@@ -471,10 +471,34 @@
     }
     .toast.show { opacity: 1; transform: translateY(0); }
 
+    /* ── EDITOR GRID HELPERS ── */
+    .parties-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .totals-notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+
+    @media (max-width: 768px) {
+      .parties-grid, .totals-notes-grid { grid-template-columns: 1fr; }
+    }
+
     @media (max-width: 640px) {
       .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
       .inv-parties { grid-template-columns: 1fr; }
-      .invoice-preview { padding: 1.5rem; }
+      .invoice-preview { padding: 1.2rem; }
+      .app { padding: 1rem .75rem 4rem; }
+
+      /* Header */
+      header { padding: 0 1rem; height: auto; flex-wrap: wrap; gap: .4rem; padding-top: .6rem; padding-bottom: .6rem; }
+      .invoice-counter { display: none; }
+      .header-actions { gap: .4rem; }
+      .header-actions .btn { font-size: .72rem; padding: .45rem .75rem; }
+
+      /* Line items table: compress on mobile */
+      .items-table th, .items-table td { padding: .45rem .5rem; }
+      .items-table th:nth-child(3), .items-table td:nth-child(3) { display: none; }
+      .items-table td input { font-size: .82rem; }
+
+      /* Invoice preview font sizes */
+      .inv-brand { font-size: 1.1rem; }
+      .inv-meta h1 { font-size: 1.6rem; }
     }
 
     @media print {
@@ -522,7 +546,7 @@
     </div>
 
     <!-- Parties -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+    <div class="parties-grid">
 
       <div class="card">
         <div class="card-header"><div class="card-dot"></div><h2>From (You)</h2></div>
@@ -530,6 +554,7 @@
           <div class="form-grid">
             <div class="field"><label>Your Name / Business</label><input type="text" id="from-name" placeholder="Acme Studio" /></div>
             <div class="field"><label>Email</label><input type="email" id="from-email" placeholder="hello@acme.com" /></div>
+            <div class="field"><label>Phone Number</label><input type="tel" id="from-phone" placeholder="(555) 123-4567" /></div>
             <div class="field"><label>Address</label><textarea id="from-address" placeholder="123 Main St&#10;New York, NY 10001"></textarea></div>
           </div>
         </div>
@@ -541,6 +566,7 @@
           <div class="form-grid">
             <div class="field"><label>Client Name / Company</label><input type="text" id="to-name" placeholder="Client Corp" /></div>
             <div class="field"><label>Email</label><input type="email" id="to-email" placeholder="accounts@client.com" /></div>
+            <div class="field"><label>Phone Number</label><input type="tel" id="to-phone" placeholder="(555) 123-4567" /></div>
             <div class="field"><label>Address</label><textarea id="to-address" placeholder="456 Business Ave&#10;Chicago, IL 60601"></textarea></div>
           </div>
         </div>
@@ -575,7 +601,7 @@
     </div>
 
     <!-- Totals + Notes -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
+    <div class="totals-notes-grid">
 
       <div class="card">
         <div class="card-header"><div class="card-dot"></div><h2>Notes</h2></div>
@@ -685,9 +711,11 @@
       const saved = {
         'from-name':    get('from-name'),
         'from-email':   get('from-email'),
+        'from-phone':   get('from-phone'),
         'from-address': get('from-address'),
         'to-name':      get('to-name'),
         'to-email':     get('to-email'),
+        'to-phone':     get('to-phone'),
         'to-address':   get('to-address'),
         'inv-number':   get('inv-number'),
         'inv-date':     get('inv-date'),
@@ -716,7 +744,7 @@
   /* ── SAVE USER DATA to sessionStorage (persists across navigation) ── */
   function saveUserData() {
     const data = {};
-    ['from-name','from-email','from-address','to-name','to-email','to-address'].forEach(id => {
+    ['from-name','from-email','from-phone','from-address','to-name','to-email','to-phone','to-address'].forEach(id => {
       data[id] = document.getElementById(id)?.value || '';
     });
     sessionStorage.setItem('draftpaid_user_data', JSON.stringify(data));
@@ -742,7 +770,7 @@
     });
 
     // Auto-save user identity fields across navigation
-    ['from-name','from-email','from-address','to-name','to-email','to-address'].forEach(id => {
+    ['from-name','from-email','from-phone','from-address','to-name','to-email','to-phone','to-address'].forEach(id => {
       document.getElementById(id)?.addEventListener("input", saveUserData);
     });
 
@@ -856,9 +884,11 @@
 
     const fromName    = v("from-name")    || "Your Business";
     const fromEmail   = v("from-email")   || "";
+    const fromPhone   = v("from-phone")   || "";
     const fromAddress = v("from-address") || "";
     const toName      = v("to-name")      || "Client Name";
     const toEmail     = v("to-email")     || "";
+    const toPhone     = v("to-phone")     || "";
     const toAddress   = v("to-address")   || "";
     const invNum      = v("inv-number")   || "INV-001";
     const invDate     = v("inv-date")     || "";
@@ -870,6 +900,7 @@
         <div>
           <div class="inv-brand">${fromName}</div>
           <div class="inv-brand-sub">${fromEmail}</div>
+          ${fromPhone ? `<div class="inv-brand-sub">${fromPhone}</div>` : ""}
           <div class="inv-brand-sub" style="white-space:pre-line;margin-top:.3rem">${fromAddress}</div>
         </div>
         <div class="inv-meta">
@@ -885,6 +916,7 @@
           <div class="inv-party-label">Billed To</div>
           <div class="inv-party-name">${toName}</div>
           <div class="inv-party-detail">${toEmail}</div>
+          ${toPhone ? `<div class="inv-party-detail">${toPhone}</div>` : ""}
           <div class="inv-party-detail" style="white-space:pre-line;margin-top:.25rem">${toAddress}</div>
         </div>
       </div>

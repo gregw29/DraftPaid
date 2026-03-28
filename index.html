@@ -584,6 +584,17 @@
       footer { grid-template-columns: 1fr 1fr; }
       nav .nav-links { display: none; }
     }
+
+    @media (max-width: 640px) {
+      footer { grid-template-columns: 1fr; gap: 2rem; padding: 2.5rem 6%; }
+      .footer-bottom { flex-direction: column; gap: .4rem; text-align: center; font-size: .78rem; }
+      .proof-bar { padding: 1.2rem 5%; }
+      .proof-stats { gap: 1.5rem; overflow-x: auto; flex-wrap: nowrap; padding-bottom: .5rem; }
+      .proof-stat { flex-shrink: 0; }
+      .hero-actions { flex-direction: column; }
+      .btn-hero { text-align: center; justify-content: center; }
+      nav { padding: 0 1.25rem; }
+    }
   </style>
 </head>
 <body>
