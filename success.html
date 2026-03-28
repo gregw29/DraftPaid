@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M1Q2BRZ5VS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-M1Q2BRZ5VS');
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome to Pro — DraftPaid</title>
+  <meta name="description" content="Your DraftPaid Pro account is now active. Unlimited invoices, no footer credit, and more."/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink:    #0a0908;
+      --off:    #f7f4ef;
+      --cream:  #ede9de;
+      --gold:   #c8a951;
+      --gold-lt:#e8d48e;
+      --green:  #2d7a4f;
+      --muted:  #6b6560;
+      --border: #ddd9d0;
+      --white:  #ffffff;
+      --r: 8px;
+      --font-d: "Playfair Display", Georgia, serif;
+      --font-b: "Outfit", sans-serif;
+      --font-m: "JetBrains Mono", monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-b); background: var(--off); color: var(--ink); min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 60px;
+      background: rgba(247,244,239,.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-d); font-size: 1.3rem; text-decoration: none; color: var(--ink); }
+    .nav-logo span { color: var(--gold); font-style: italic; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { font-size: .85rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      background: var(--ink); color: var(--off) !important;
+      padding: .5rem 1.2rem; border-radius: var(--r);
+      font-size: .82rem !important; font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--gold) !important; color: var(--ink) !important; }
+
+    /* ── SUCCESS HERO ── */
+    .success-wrap {
+      min-height: calc(100vh - 60px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px 5%;
+    }
+    .success-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 48px rgba(10,9,8,.10);
+      padding: 3rem 3.5rem;
+      max-width: 560px; width: 100%;
+      text-align: center;
+    }
+    .success-icon {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #c8a951, #e8d48e);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.4rem; margin: 0 auto 1.75rem;
+      box-shadow: 0 8px 32px rgba(200,169,81,.35);
+    }
+    .success-label {
+      font-family: var(--font-m); font-size: .7rem;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: .75rem;
+    }
+    .success-title {
+      font-family: var(--font-d);
+      font-size: 2rem; font-weight: 900;
+      line-height: 1.2; margin-bottom: .75rem;
+      color: var(--ink);
+    }
+    .success-sub {
+      font-size: 1rem; color: var(--muted);
+      line-height: 1.6; margin-bottom: 2rem;
+    }
+    .features-list {
+      list-style: none;
+      text-align: left;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .features-list li {
+      display: flex; align-items: flex-start; gap: .75rem;
+      font-size: .92rem; color: var(--ink);
+      padding: .55rem 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.4;
+    }
+    .features-list li:last-child { border-bottom: none; }
+    .features-list .check {
+      color: var(--gold); font-weight: 700;
+      font-size: 1rem; flex-shrink: 0; margin-top: .1rem;
+    }
+    .features-list .coming-soon {
+      font-family: var(--font-m); font-size: .62rem;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--muted); margin-left: .3rem;
+      background: var(--border); border-radius: 99px;
+      padding: .1rem .45rem; vertical-align: middle;
+    }
+    .btn-pro {
+      display: block; width: 100%;
+      background: var(--gold); color: var(--ink);
+      padding: 1rem 2rem; border-radius: var(--r);
+      font-family: var(--font-b); font-size: 1rem; font-weight: 700;
+      text-decoration: none; letter-spacing: .02em;
+      box-shadow: 0 4px 20px rgba(200,169,81,.35);
+      transition: all .2s ease;
+      margin-bottom: 1rem;
+    }
+    .btn-pro:hover { background: #b8932e; transform: translateY(-2px); box-shadow: 0 8px 32px rgba(200,169,81,.4); }
+    .back-link {
+      display: block; font-size: .85rem; color: var(--muted);
+      text-decoration: none; transition: color .2s;
+    }
+    .back-link:hover { color: var(--ink); }
+
+    footer {
+      background: #07060a; color: rgba(247,244,239,.4);
+      padding: 2rem 5%; text-align: center;
+      font-family: var(--font-m); font-size: .72rem;
+      letter-spacing: .06em;
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+
+    @media (max-width: 640px) {
+      .success-card { padding: 2rem 1.5rem; }
+      .success-title { font-size: 1.6rem; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>Draft</span>Paid</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="draftpaid-templates.html">Templates</a>
+    <a href="invoice-generator.html" class="nav-cta">Create Invoice →</a>
+  </div>
+</nav>
+
+<div class="success-wrap">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <div class="success-label">Payment confirmed</div>
+    <h1 class="success-title">Welcome to DraftPaid Pro! 🎉</h1>
+    <p class="success-sub">Your Pro features are now active. Everything unlocks instantly — no refresh needed.</p>
+
+    <ul class="features-list">
+      <li><span class="check">✓</span> Unlimited invoices — no monthly limit</li>
+      <li><span class="check">✓</span> DraftPaid footer credit removed</li>
+      <li><span class="check">✓</span> Priority support</li>
+      <li><span class="check">✓</span> Recurring invoices <span class="coming-soon">coming soon</span></li>
+      <li><span class="check">✓</span> Payment reminders <span class="coming-soon">coming soon</span></li>
+    </ul>
+
+    <a href="invoice-generator.html" class="btn-pro">Create Your First Pro Invoice →</a>
+    <a href="index.html" class="back-link">← Back to Home</a>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 DraftPaid. Built with ♥ in San Diego, CA. &nbsp;|&nbsp;
+  <a href="index.html">Home</a> &nbsp;|&nbsp;
+  <a href="privacy.html">Privacy</a> &nbsp;|&nbsp;
+  <a href="terms.html">Terms</a> &nbsp;|&nbsp;
+  <a href="mailto:draftpaid@gmail.com">Contact</a>
+  </p>
+</footer>
+
+<script>
+  // Activate Pro immediately on page load
+  localStorage.setItem('draftpaid_pro', 'true');
+  localStorage.setItem('draftpaid_pro_date', new Date().toISOString());
+
+  // Track conversion event
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'purchase', { event_category: 'pro_upgrade', value: 9 });
+  }
+</script>
+
+</body>
+</html>

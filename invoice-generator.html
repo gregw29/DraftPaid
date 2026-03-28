@@ -273,6 +273,17 @@
     }
     .invoice-counter.near-limit { color: var(--gold-lt); }
 
+    /* ── PRO BADGE ── */
+    .pro-badge {
+      display: none;
+      font-family: var(--font-mono);
+      font-size: .65rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase;
+      background: var(--gold); color: var(--ink);
+      padding: .2rem .55rem; border-radius: 4px;
+      margin-left: .6rem; vertical-align: middle;
+    }
+
     /* ── PREVIEW MODAL ── */
     .preview-modal-overlay {
       position: fixed; inset: 0; z-index: 200;
@@ -511,7 +522,7 @@
 <body>
 
 <header>
-  <div class="logo"><span>Draft</span>Paid</div>
+  <div class="logo"><span>Draft</span>Paid<span class="pro-badge" id="pro-badge">PRO</span></div>
   <span class="invoice-counter" id="invoice-counter"></span>
   <div class="header-actions">
     <button class="btn btn-outline" onclick="openPreviewModal()">👁 Preview Invoice</button>
@@ -682,7 +693,7 @@
     <div class="upgrade-modal-title">You've used all 5 free invoices this month</div>
     <p class="upgrade-modal-body">Upgrade to DraftPaid Pro for unlimited invoices, recurring billing, payment reminders, and more — all for just $9/month.</p>
     <div class="upgrade-modal-actions">
-      <a href="index.html#pricing" class="btn-upgrade">Upgrade to Pro — $9/month →</a>
+      <a href="https://buy.stripe.com/test_00wcN5af8bed1qtcpqgfu00" class="btn-upgrade">Upgrade to Pro — $9/month →</a>
       <button class="btn-later" onclick="closeUpgradeModal()">Maybe later</button>
     </div>
   </div>
@@ -774,7 +785,8 @@
       document.getElementById(id)?.addEventListener("input", saveUserData);
     });
 
-    // Invoice counter
+    // Pro status + invoice counter
+    checkProStatus();
     updateCounterDisplay();
 
     // Close modals when clicking the backdrop
@@ -944,7 +956,7 @@
 
       ${notes ? `<div class="inv-note">${notes}</div>` : ""}
 
-      <div class="inv-footer">Thank you for your business</div>
+      ${localStorage.getItem('draftpaid_pro') !== 'true' ? '<div class="inv-footer">Created with DraftPaid &bull; draftpaid.com</div>' : ""}
     `;
   }
 
@@ -965,11 +977,21 @@
   }
 
   function updateCounterDisplay() {
-    const count = getInvoiceCount();
+    const isPro = localStorage.getItem('draftpaid_pro') === 'true';
     const el = document.getElementById("invoice-counter");
     if (!el) return;
+    if (isPro) { el.style.display = 'none'; return; }
+    const count = getInvoiceCount();
     el.textContent = `${count} of 5 free invoices used this month`;
     el.classList.toggle("near-limit", count >= 4);
+  }
+
+  function checkProStatus() {
+    const isPro = localStorage.getItem('draftpaid_pro') === 'true';
+    if (isPro) {
+      const badge = document.getElementById("pro-badge");
+      if (badge) badge.style.display = 'inline';
+    }
   }
 
   function closeUpgradeModal() {
@@ -978,7 +1000,8 @@
 
   /* ── PDF DOWNLOAD ── */
   async function downloadPDF() {
-    if (getInvoiceCount() >= 5) {
+    const isPro = localStorage.getItem('draftpaid_pro') === 'true';
+    if (!isPro && getInvoiceCount() >= 5) {
       closePreviewModal();
       document.getElementById("upgrade-modal-overlay").classList.remove("hidden");
       return;

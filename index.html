@@ -826,7 +826,7 @@
         <li class="price-feature">Payment reminders</li>
         <li class="price-feature">Invoice tracking</li>
       </ul>
-      <a href="#" class="btn-price btn-price-gold">Get Pro — $9/mo →</a>
+      <a href="https://buy.stripe.com/test_00wcN5af8bed1qtcpqgfu00" class="btn-price btn-price-gold" id="pro-cta-btn">Get Pro — $9/mo →</a>
     </div>
 
     <!-- Business -->
@@ -1017,4 +1017,15 @@
     el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
     observer.observe(el);
   });
+
+  // Pro status — update pricing CTA if already subscribed
+  (function() {
+    const isPro = localStorage.getItem('draftpaid_pro') === 'true';
+    const btn = document.getElementById('pro-cta-btn');
+    if (isPro && btn) {
+      btn.textContent = '✓ You\'re on Pro';
+      btn.style.background = '#b8932e';
+      btn.href = 'invoice-generator.html';
+    }
+  })();
 </script>
