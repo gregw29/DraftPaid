@@ -1039,14 +1039,18 @@
           localStorage.setItem('draftpaid_pro', 'true');
         } else {
           localStorage.removeItem('draftpaid_pro');
-          // Reset invoice counter if stored month doesn't match current month
-          const currentMonth = new Date().toISOString().slice(0, 7);
-          if (localStorage.getItem('draftpaid_invoice_month') !== currentMonth) {
-            localStorage.setItem('draftpaid_invoice_month', currentMonth);
-            localStorage.setItem('draftpaid_invoice_count', '0');
-          }
         }
         applyProUI(isDbPro);
+
+        // Reset counter if this is a different user on this browser
+        const storedEmail = localStorage.getItem('draftpaid_user_email');
+        if (storedEmail !== user.email) {
+          localStorage.setItem('draftpaid_user_email', user.email);
+          localStorage.setItem('draftpaid_invoice_count', '0');
+          localStorage.setItem('draftpaid_invoice_month',
+            new Date().getMonth() + '-' + new Date().getFullYear());
+        }
+
         updateAccountMenu(user.email);
       } else {
         // Not logged in — localStorage fallback
