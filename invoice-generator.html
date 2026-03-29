@@ -1039,6 +1039,12 @@
           localStorage.setItem('draftpaid_pro', 'true');
         } else {
           localStorage.removeItem('draftpaid_pro');
+          // Reset invoice counter if stored month doesn't match current month
+          const currentMonth = new Date().toISOString().slice(0, 7);
+          if (localStorage.getItem('draftpaid_invoice_month') !== currentMonth) {
+            localStorage.setItem('draftpaid_invoice_month', currentMonth);
+            localStorage.setItem('draftpaid_invoice_count', '0');
+          }
         }
         applyProUI(isDbPro);
         updateAccountMenu(user.email);
