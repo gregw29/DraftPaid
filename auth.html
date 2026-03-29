@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M1Q2BRZ5VS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-M1Q2BRZ5VS');
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In — DraftPaid</title>
+  <meta name="description" content="Sign in or create a DraftPaid account to sync your Pro status across all devices."/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --ink:    #0a0908;
+      --off:    #f7f4ef;
+      --cream:  #ede9de;
+      --gold:   #c8a951;
+      --gold-lt:#e8d48e;
+      --green:  #2d7a4f;
+      --muted:  #6b6560;
+      --border: #ddd9d0;
+      --white:  #ffffff;
+      --r: 8px;
+      --font-d: "Playfair Display", Georgia, serif;
+      --font-b: "Outfit", sans-serif;
+      --font-m: "JetBrains Mono", monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-b); background: var(--ink); color: var(--ink); min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 60px;
+      background: rgba(10,9,8,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .nav-logo { font-family: var(--font-d); font-size: 1.3rem; text-decoration: none; color: var(--off); }
+    .nav-logo span { color: var(--gold); font-style: italic; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { font-size: .85rem; color: rgba(247,244,239,.55); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--off); }
+    .nav-cta {
+      background: var(--gold); color: var(--ink) !important;
+      padding: .5rem 1.2rem; border-radius: var(--r);
+      font-size: .82rem !important; font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--gold-lt) !important; }
+
+    /* ── PAGE LAYOUT ── */
+    .auth-page {
+      min-height: calc(100vh - 60px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 3rem 1.5rem;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 0%, rgba(200,169,81,.12) 0%, transparent 70%),
+        var(--ink);
+    }
+
+    /* ── AUTH CARD ── */
+    .auth-card {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.45);
+      width: 100%; max-width: 420px;
+      overflow: hidden;
+    }
+
+    /* Dark top banner */
+    .auth-banner {
+      background: var(--ink);
+      padding: 2rem 2rem 1.5rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .auth-banner-logo {
+      font-family: var(--font-d);
+      font-size: 1.6rem; color: var(--off);
+      margin-bottom: .5rem;
+    }
+    .auth-banner-logo span { color: var(--gold); font-style: italic; }
+    .auth-banner-tag {
+      font-family: var(--font-m); font-size: .68rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(247,244,239,.4);
+    }
+
+    /* Tabs */
+    .auth-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+    }
+    .auth-tab {
+      flex: 1; padding: .9rem;
+      font-family: var(--font-b); font-size: .88rem; font-weight: 600;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); letter-spacing: .02em;
+      border-bottom: 2px solid transparent;
+      transition: all .18s;
+    }
+    .auth-tab.active {
+      color: var(--ink);
+      border-bottom-color: var(--gold);
+    }
+
+    /* Form body */
+    .auth-body { padding: 1.75rem 2rem 2rem; }
+    .auth-form { display: flex; flex-direction: column; gap: .9rem; }
+    .auth-form label {
+      font-family: var(--font-m); font-size: .68rem;
+      letter-spacing: .09em; text-transform: uppercase;
+      color: var(--muted); display: block; margin-bottom: .25rem;
+    }
+    .auth-form input {
+      width: 100%; padding: .7rem .9rem;
+      font-family: var(--font-b); font-size: .93rem; color: var(--ink);
+      background: var(--off); border: 1.5px solid var(--border);
+      border-radius: var(--r); transition: border-color .15s;
+    }
+    .auth-form input:focus { outline: none; border-color: var(--gold); background: var(--white); }
+    .btn-auth {
+      width: 100%; padding: .85rem;
+      background: var(--gold); color: var(--ink);
+      font-family: var(--font-b); font-size: .95rem; font-weight: 700;
+      border: none; border-radius: var(--r); cursor: pointer;
+      letter-spacing: .02em; transition: all .18s;
+      box-shadow: 0 4px 16px rgba(200,169,81,.3);
+      margin-top: .25rem;
+    }
+    .btn-auth:hover { background: #b8932e; transform: translateY(-1px); }
+    .btn-auth:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    .auth-error {
+      font-size: .83rem; color: #c0392b;
+      background: #fdf2f0; border: 1px solid #f5c6c0;
+      border-radius: var(--r); padding: .6rem .85rem;
+      display: none;
+    }
+    .auth-error.show { display: block; }
+    .auth-success {
+      font-size: .83rem; color: var(--green);
+      background: #f0faf4; border: 1px solid #a8d5b5;
+      border-radius: var(--r); padding: .6rem .85rem;
+      display: none;
+    }
+    .auth-success.show { display: block; }
+
+    .auth-divider {
+      text-align: center; margin-top: 1.25rem;
+      padding-top: 1.25rem; border-top: 1px solid var(--border);
+    }
+    .auth-skip {
+      font-size: .85rem; color: var(--muted);
+      text-decoration: none; transition: color .2s;
+    }
+    .auth-skip:hover { color: var(--ink); }
+
+    .auth-hint {
+      font-size: .78rem; color: var(--muted);
+      text-align: center; margin-top: .5rem; line-height: 1.5;
+    }
+
+    footer {
+      background: rgba(0,0,0,.4); color: rgba(247,244,239,.3);
+      padding: 1.5rem 5%; text-align: center;
+      font-family: var(--font-m); font-size: .7rem;
+      letter-spacing: .06em;
+    }
+    footer a { color: rgba(200,169,81,.7); text-decoration: none; }
+
+    @media (max-width: 480px) {
+      .auth-body { padding: 1.5rem 1.25rem; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>Draft</span>Paid</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="invoice-generator.html" class="nav-cta">Create Invoice →</a>
+  </div>
+</nav>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-banner">
+      <div class="auth-banner-logo"><span>Draft</span>Paid</div>
+      <div class="auth-banner-tag">Account access</div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+    </div>
+
+    <!-- Sign In form -->
+    <div class="auth-body" id="form-signin">
+      <div class="auth-form">
+        <div>
+          <label for="signin-email">Email</label>
+          <input type="email" id="signin-email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div>
+          <label for="signin-password">Password</label>
+          <input type="password" id="signin-password" placeholder="••••••••" autocomplete="current-password"/>
+        </div>
+        <div id="signin-error" class="auth-error"></div>
+        <button class="btn-auth" id="signin-btn" onclick="signIn()">Sign In →</button>
+      </div>
+      <div class="auth-divider">
+        <a href="invoice-generator.html" class="auth-skip">Continue without account →</a>
+      </div>
+    </div>
+
+    <!-- Sign Up form -->
+    <div class="auth-body" id="form-signup" style="display:none">
+      <div class="auth-form">
+        <div>
+          <label for="signup-email">Email</label>
+          <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div>
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" placeholder="Min. 6 characters" autocomplete="new-password"/>
+        </div>
+        <div id="signup-error" class="auth-error"></div>
+        <div id="signup-success" class="auth-success"></div>
+        <button class="btn-auth" id="signup-btn" onclick="signUp()">Create Account →</button>
+      </div>
+      <p class="auth-hint">Free account. No credit card. Sync your Pro status across all devices.</p>
+      <div class="auth-divider">
+        <a href="invoice-generator.html" class="auth-skip">Continue without account →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 DraftPaid &nbsp;|&nbsp; <a href="privacy.html">Privacy</a> &nbsp;|&nbsp; <a href="terms.html">Terms</a></p>
+</footer>
+
+<script>
+  const SUPA_URL = 'https://cvgbtprhovdtwygzilyx.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2Z2J0cHJob3ZkdHd5Z3ppbHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NTY1MTIsImV4cCI6MjA5MDMzMjUxMn0.iYuluH3j3b8bTT0UzHH9SxcHksycPMee0En4UEZvIy0';
+  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  function switchTab(tab) {
+    document.getElementById('form-signin').style.display = tab === 'signin' ? 'block' : 'none';
+    document.getElementById('form-signup').style.display = tab === 'signup' ? 'block' : 'none';
+    document.getElementById('tab-signin').classList.toggle('active', tab === 'signin');
+    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  }
+
+  function showError(form, msg) {
+    const el = document.getElementById(`${form}-error`);
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+  function clearMessages(form) {
+    document.getElementById(`${form}-error`).classList.remove('show');
+    if (document.getElementById(`${form}-success`)) {
+      document.getElementById(`${form}-success`).classList.remove('show');
+    }
+  }
+
+  async function syncProStatus(user) {
+    const { data } = await sb
+      .from('subscriptions')
+      .select('status')
+      .eq('email', user.email)
+      .single();
+    if (data?.status === 'pro') {
+      localStorage.setItem('draftpaid_pro', 'true');
+    } else {
+      localStorage.removeItem('draftpaid_pro');
+    }
+  }
+
+  async function signIn() {
+    clearMessages('signin');
+    const email    = document.getElementById('signin-email').value.trim();
+    const password = document.getElementById('signin-password').value;
+    if (!email || !password) { showError('signin', 'Please enter your email and password.'); return; }
+
+    const btn = document.getElementById('signin-btn');
+    btn.disabled = true; btn.textContent = 'Signing in…';
+
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      btn.disabled = false; btn.textContent = 'Sign In →';
+      showError('signin', error.message);
+      return;
+    }
+    await syncProStatus(data.user);
+    window.location.href = 'invoice-generator.html';
+  }
+
+  async function signUp() {
+    clearMessages('signup');
+    const email    = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    if (!email || !password) { showError('signup', 'Please enter your email and password.'); return; }
+    if (password.length < 6)  { showError('signup', 'Password must be at least 6 characters.'); return; }
+
+    const btn = document.getElementById('signup-btn');
+    btn.disabled = true; btn.textContent = 'Creating account…';
+
+    const { data, error } = await sb.auth.signUp({ email, password });
+    if (error) {
+      btn.disabled = false; btn.textContent = 'Create Account →';
+      showError('signup', error.message);
+      return;
+    }
+
+    // Insert subscription row with free status
+    await sb.from('subscriptions').upsert({
+      email,
+      status: 'free',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'email' });
+
+    // If Supabase requires email confirmation, show message; otherwise redirect
+    if (data.user && !data.session) {
+      btn.disabled = false; btn.textContent = 'Create Account →';
+      const s = document.getElementById('signup-success');
+      s.textContent = 'Check your email to confirm your account, then sign in.';
+      s.classList.add('show');
+    } else {
+      window.location.href = 'invoice-generator.html';
+    }
+  }
+
+  // Allow Enter key to submit
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const signinVisible = document.getElementById('form-signin').style.display !== 'none';
+      if (signinVisible) signIn();
+      else signUp();
+    }
+  });
+
+  // Redirect if already logged in
+  (async () => {
+    const { data: { user } } = await sb.auth.getUser();
+    if (user) {
+      await syncProStatus(user);
+      window.location.href = 'invoice-generator.html';
+    }
+  })();
+</script>
+
+</body>
+</html>

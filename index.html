@@ -14,6 +14,7 @@
   <title>DraftPaid — Professional Invoice Generator. No Account Required.</title>
   <meta name="description" content="Create professional invoices in 30 seconds. No account needed, no watermarks, no tricks. Free forever for freelancers and small businesses."/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --ink:     #0a0908;
@@ -607,6 +608,7 @@
     <a href="#how">How it Works</a>
     <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
+    <a href="auth.html" id="nav-auth-link">Sign In</a>
     <a href="invoice-generator.html" class="nav-cta">Create Invoice →</a>
   </div>
 </nav>
@@ -1018,7 +1020,7 @@
     observer.observe(el);
   });
 
-  // Pro status — update pricing CTA if already subscribed
+  // Pro status — update pricing CTA if already subscribed (localStorage fallback)
   (function() {
     const isPro = localStorage.getItem('draftpaid_pro') === 'true';
     const btn = document.getElementById('pro-cta-btn');
@@ -1027,5 +1029,42 @@
       btn.style.background = '#b8932e';
       btn.href = 'invoice-generator.html';
     }
+  })();
+
+  // Supabase session check — update nav and Pro CTA
+  const SUPA_URL = 'https://cvgbtprhovdtwygzilyx.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2Z2J0cHJob3ZkdHd5Z3ppbHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NTY1MTIsImV4cCI6MjA5MDMzMjUxMn0.iYuluH3j3b8bTT0UzHH9SxcHksycPMee0En4UEZvIy0';
+  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  (async () => {
+    try {
+      const { data: { user } } = await sb.auth.getUser();
+      const authLink = document.getElementById('nav-auth-link');
+      const proBtn   = document.getElementById('pro-cta-btn');
+
+      if (user) {
+        // Update nav: show short email label linking to generator
+        if (authLink) {
+          authLink.textContent = user.email.split('@')[0];
+          authLink.href = 'invoice-generator.html';
+          authLink.title = user.email;
+        }
+
+        // Check Pro status in DB and update CTA
+        const { data } = await sb
+          .from('subscriptions')
+          .select('status')
+          .eq('email', user.email)
+          .single();
+        if (data?.status === 'pro') {
+          localStorage.setItem('draftpaid_pro', 'true');
+          if (proBtn) {
+            proBtn.textContent = '✓ You\'re on Pro';
+            proBtn.style.background = '#b8932e';
+            proBtn.href = 'invoice-generator.html';
+          }
+        }
+      }
+    } catch(e) { /* Supabase unavailable — use localStorage state */ }
   })();
 </script>

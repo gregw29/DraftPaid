@@ -13,6 +13,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DraftPaid — Professional Invoice Generator</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
@@ -285,6 +286,32 @@
       margin-left: .6rem; vertical-align: middle;
     }
 
+    /* ── ACCOUNT MENU ── */
+    .account-menu {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .75rem; font-family: var(--font-mono);
+    }
+    .account-email {
+      color: rgba(247,244,239,.45);
+      letter-spacing: .03em;
+      max-width: 140px; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
+    }
+    .btn-signout {
+      background: transparent; border: 1px solid rgba(247,244,239,.2);
+      color: rgba(247,244,239,.45); font-size: .68rem;
+      font-family: var(--font-mono); letter-spacing: .05em;
+      padding: .2rem .55rem; border-radius: 3px; cursor: pointer;
+      transition: all .15s;
+    }
+    .btn-signout:hover { border-color: var(--gold-lt); color: var(--gold-lt); }
+    .btn-signin-link {
+      color: rgba(247,244,239,.45); text-decoration: none;
+      font-size: .75rem; font-family: var(--font-mono);
+      letter-spacing: .05em; transition: color .15s;
+    }
+    .btn-signin-link:hover { color: var(--gold-lt); }
+
     /* ── PREVIEW MODAL ── */
     .preview-modal-overlay {
       position: fixed; inset: 0; z-index: 200;
@@ -526,6 +553,7 @@
   <a href="index.html" class="logo"><span>Draft</span>Paid<span class="pro-badge" id="pro-badge">PRO</span></a>
   <span class="invoice-counter" id="invoice-counter"></span>
   <div class="header-actions">
+    <div class="account-menu" id="account-menu"></div>
     <button class="btn btn-outline" onclick="openPreviewModal()">👁 Preview Invoice</button>
     <button class="btn btn-primary" onclick="downloadPDF()">⬇ Download PDF</button>
   </div>
@@ -762,8 +790,13 @@
     sessionStorage.setItem('draftpaid_user_data', JSON.stringify(data));
   }
 
+  /* ── SUPABASE ── */
+  const SUPA_URL = 'https://cvgbtprhovdtwygzilyx.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2Z2J0cHJob3ZkdHd5Z3ppbHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NTY1MTIsImV4cCI6MjA5MDMzMjUxMn0.iYuluH3j3b8bTT0UzHH9SxcHksycPMee0En4UEZvIy0';
+  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
   /* ── INIT ── */
-  window.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("DOMContentLoaded", async () => {
     // Load profession template if coming from templates page
     loadTemplateFromStorage();
 
@@ -987,12 +1020,60 @@
     el.classList.toggle("near-limit", count >= 4);
   }
 
-  function checkProStatus() {
-    const isPro = localStorage.getItem('draftpaid_pro') === 'true';
-    if (isPro) {
-      const badge = document.getElementById("pro-badge");
-      if (badge) badge.style.display = 'inline';
+  async function checkProStatus() {
+    // Apply localStorage immediately so UI doesn't flicker
+    const lsPro = localStorage.getItem('draftpaid_pro') === 'true';
+    applyProUI(lsPro);
+
+    // Then verify with Supabase (authoritative source)
+    try {
+      const { data: { user } } = await sb.auth.getUser();
+      if (user) {
+        const { data } = await sb
+          .from('subscriptions')
+          .select('status')
+          .eq('email', user.email)
+          .single();
+        const isDbPro = data?.status === 'pro';
+        if (isDbPro) {
+          localStorage.setItem('draftpaid_pro', 'true');
+        } else {
+          localStorage.removeItem('draftpaid_pro');
+        }
+        applyProUI(isDbPro);
+        updateAccountMenu(user.email);
+      } else {
+        // Not logged in — localStorage fallback
+        updateAccountMenu(null);
+      }
+    } catch(e) {
+      // Supabase unavailable — use localStorage fallback
+      updateAccountMenu(null);
     }
+  }
+
+  function applyProUI(isPro) {
+    const badge = document.getElementById("pro-badge");
+    if (badge) badge.style.display = isPro ? 'inline' : 'none';
+  }
+
+  function updateAccountMenu(email) {
+    const menu = document.getElementById('account-menu');
+    if (!menu) return;
+    if (email) {
+      menu.innerHTML =
+        `<span class="account-email">${email}</span>` +
+        `<button class="btn-signout" onclick="signOut()">Sign Out</button>`;
+    } else {
+      menu.innerHTML = `<a href="auth.html" class="btn-signin-link">Sign In</a>`;
+    }
+  }
+
+  async function signOut() {
+    await sb.auth.signOut();
+    localStorage.removeItem('draftpaid_pro');
+    localStorage.removeItem('draftpaid_pro_date');
+    window.location.reload();
   }
 
   function closeUpgradeModal() {

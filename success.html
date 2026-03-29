@@ -14,6 +14,7 @@
   <title>Welcome to Pro — DraftPaid</title>
   <meta name="description" content="Your DraftPaid Pro account is now active. Unlimited invoices, no footer credit, and more."/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --ink:    #0a0908;
@@ -135,6 +136,29 @@
     }
     .back-link:hover { color: var(--ink); }
 
+    .no-account-prompt {
+      display: none;
+      margin-top: 1.5rem; padding: 1.25rem 1.5rem;
+      background: var(--cream); border: 1px solid var(--border);
+      border-radius: var(--r); text-align: left;
+    }
+    .no-account-prompt p {
+      font-size: .88rem; color: var(--muted); line-height: 1.55;
+      margin-bottom: 1rem;
+    }
+    .btn-create-account {
+      display: block; background: var(--ink); color: var(--off);
+      padding: .75rem 1.5rem; border-radius: var(--r);
+      font-family: var(--font-b); font-size: .88rem; font-weight: 600;
+      text-decoration: none; text-align: center;
+      transition: background .18s; margin-bottom: .75rem;
+    }
+    .btn-create-account:hover { background: var(--gold); color: var(--ink); }
+    .success-user-note {
+      font-size: .85rem; color: var(--muted);
+      margin-bottom: 1.5rem; font-style: italic;
+    }
+
     footer {
       background: #07060a; color: rgba(247,244,239,.4);
       padding: 2rem 5%; text-align: center;
@@ -168,6 +192,7 @@
     <div class="success-label">Payment confirmed</div>
     <h1 class="success-title">Welcome to DraftPaid Pro! 🎉</h1>
     <p class="success-sub">Your Pro features are now active. Everything unlocks instantly — no refresh needed.</p>
+    <p class="success-user-note" id="success-user-note"></p>
 
     <ul class="features-list">
       <li><span class="check">✓</span> Unlimited invoices — no monthly limit</li>
@@ -179,6 +204,12 @@
 
     <a href="invoice-generator.html" class="btn-pro">Create Your First Pro Invoice →</a>
     <a href="index.html" class="back-link">← Back to Home</a>
+
+    <div class="no-account-prompt" id="no-account-prompt">
+      <p>Create a free account to keep your Pro status synced across all devices and browsers.</p>
+      <a href="auth.html" class="btn-create-account">Create Account — Save My Pro →</a>
+      <a href="invoice-generator.html" class="back-link">Skip for now</a>
+    </div>
   </div>
 </div>
 
@@ -192,7 +223,11 @@
 </footer>
 
 <script>
-  // Activate Pro immediately on page load
+  const SUPA_URL = 'https://cvgbtprhovdtwygzilyx.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2Z2J0cHJob3ZkdHd5Z3ppbHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NTY1MTIsImV4cCI6MjA5MDMzMjUxMn0.iYuluH3j3b8bTT0UzHH9SxcHksycPMee0En4UEZvIy0';
+  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  // Always activate Pro in localStorage immediately (works even without account)
   localStorage.setItem('draftpaid_pro', 'true');
   localStorage.setItem('draftpaid_pro_date', new Date().toISOString());
 
@@ -200,6 +235,31 @@
   if (typeof gtag !== 'undefined') {
     gtag('event', 'purchase', { event_category: 'pro_upgrade', value: 9 });
   }
+
+  // Sync Pro to Supabase if user is logged in
+  (async () => {
+    try {
+      const { data: { user } } = await sb.auth.getUser();
+      if (user) {
+        // Upsert Pro status in DB
+        await sb.from('subscriptions').upsert({
+          email: user.email,
+          status: 'pro',
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'email' });
+
+        // Personalise the page
+        const note = document.getElementById('success-user-note');
+        if (note) note.textContent = `Welcome back, ${user.email}! Your Pro is active.`;
+      } else {
+        // Not logged in — show prompt to create account
+        const prompt = document.getElementById('no-account-prompt');
+        if (prompt) prompt.style.display = 'block';
+      }
+    } catch(e) {
+      // Supabase unavailable — localStorage fallback still active
+    }
+  })();
 </script>
 
 </body>
