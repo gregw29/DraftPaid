@@ -446,38 +446,6 @@
     }
     .btn-price-white:hover { background: var(--gold); }
 
-    /* ── TESTIMONIALS ── */
-    .testimonials-section { background: var(--cream); padding: 100px 6%; }
-    .testimonials-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-    }
-    .testimonial {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: 12px; padding: 2rem;
-      position: relative;
-    }
-    .testimonial::before {
-      content: '"'; font-family: var(--font-d);
-      font-size: 4rem; color: var(--gold-lt);
-      line-height: 1; position: absolute;
-      top: 1rem; right: 1.5rem; opacity: .5;
-    }
-    .stars { color: var(--gold); font-size: .9rem; margin-bottom: 1rem; }
-    .testimonial-text {
-      font-size: .92rem; line-height: 1.7;
-      color: var(--ink); margin-bottom: 1.5rem;
-    }
-    .testimonial-author { display: flex; align-items: center; gap: .75rem; }
-    .author-avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: .9rem; color: var(--white);
-      flex-shrink: 0;
-    }
-    .author-name { font-weight: 600; font-size: .88rem; }
-    .author-role { font-size: .78rem; color: var(--muted); }
-
     /* ── FAQ ── */
     .faq-grid { max-width: 720px; margin: 0 auto; }
     .faq-item {
@@ -579,7 +547,7 @@
     @media (max-width: 900px) {
       .hero { grid-template-columns: 1fr; padding-top: 80px; }
       .hero-visual { display: none; }
-      .features-grid, .pricing-grid, .testimonials-grid, .steps-grid { grid-template-columns: 1fr; }
+      .features-grid, .pricing-grid, .steps-grid { grid-template-columns: 1fr; }
       .steps-grid::before { display: none; }
       .pricing-grid .price-card.featured { transform: none; }
       footer { grid-template-columns: 1fr 1fr; }
@@ -854,49 +822,6 @@
   </div>
 </section>
 
-<!-- ── TESTIMONIALS ── -->
-<section class="testimonials-section" id="testimonials">
-  <div class="section-label">Loved by freelancers</div>
-  <h2 class="section-title">Real people. <em>Real results.</em></h2>
-  <p class="section-sub">Thousands of freelancers and small business owners trust DraftPaid to look professional and get paid faster.</p>
-
-  <div class="testimonials-grid">
-    <div class="testimonial">
-      <div class="stars">★★★★★</div>
-      <p class="testimonial-text">"I was using Wave for 3 years until they held my payment for 65 days with no explanation. Switched to DraftPaid and never looked back. Simple, beautiful, and it just works."</p>
-      <div class="testimonial-author">
-        <div class="author-avatar" style="background:#2d7a4f">MR</div>
-        <div>
-          <div class="author-name">Marcus R.</div>
-          <div class="author-role">Freelance Photographer</div>
-        </div>
-      </div>
-    </div>
-    <div class="testimonial">
-      <div class="stars">★★★★★</div>
-      <p class="testimonial-text">"Finally an invoice tool that doesn't require me to create an account and remember another password. Open it, fill it in, download. That's it. Exactly what I needed."</p>
-      <div class="testimonial-author">
-        <div class="author-avatar" style="background:#c8a951">SK</div>
-        <div>
-          <div class="author-name">Sarah K.</div>
-          <div class="author-role">Web Designer</div>
-        </div>
-      </div>
-    </div>
-    <div class="testimonial">
-      <div class="stars">★★★★★</div>
-      <p class="testimonial-text">"My clients actually comment on how professional my invoices look now. DraftPaid's design beats everything I've tried — and I've tried a lot. The pricing is fair too."</p>
-      <div class="testimonial-author">
-        <div class="author-avatar" style="background:#2c3e50">TL</div>
-        <div>
-          <div class="author-name">Tom L.</div>
-          <div class="author-role">Marketing Consultant</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ── FAQ ── -->
 <section class="section" id="faq">
   <div class="section-label">Questions</div>
@@ -1013,7 +938,7 @@
     });
   }, { threshold: 0.1 });
 
-  document.querySelectorAll('.feature-card, .step, .price-card, .testimonial, .faq-item').forEach(el => {
+  document.querySelectorAll('.feature-card, .step, .price-card, .faq-item').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
