@@ -476,6 +476,69 @@
     }
     .faq-item.open .faq-answer { max-height: 200px; padding-top: 1rem; }
 
+    /* ── COMING SOON ── */
+    .coming-section {
+      background: var(--ink); color: var(--off);
+      padding: 100px 6%;
+    }
+    .coming-section .section-label { color: var(--gold-lt); }
+    .coming-section .section-title { color: var(--off); }
+    .coming-section .section-sub { color: rgba(247,244,239,.6); }
+    .coming-email {
+      font-size: .88rem; color: rgba(247,244,239,.4);
+      margin-top: -.5rem; margin-bottom: 3.5rem;
+    }
+    .coming-email a { color: var(--gold); text-decoration: none; }
+    .coming-email a:hover { text-decoration: underline; }
+    .coming-tier-label {
+      font-family: var(--font-m); font-size: .68rem;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .coming-tier-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: rgba(255,255,255,.08);
+    }
+    .coming-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem; margin-bottom: 3.5rem;
+    }
+    .coming-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--r); padding: 1.5rem;
+      position: relative; transition: border-color .2s;
+    }
+    .coming-card:hover { border-color: rgba(200,169,81,.35); }
+    .coming-badge {
+      position: absolute; top: 1rem; right: 1rem;
+      font-family: var(--font-m); font-size: .58rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      background: rgba(200,169,81,.15); color: var(--gold);
+      border: 1px solid rgba(200,169,81,.3);
+      border-radius: 99px; padding: .18rem .55rem;
+    }
+    .coming-icon { font-size: 1.8rem; margin-bottom: .85rem; line-height: 1; }
+    .coming-title {
+      font-family: var(--font-b); font-size: .95rem; font-weight: 700;
+      color: var(--gold-lt); margin-bottom: .5rem;
+    }
+    .coming-desc {
+      font-size: .84rem; color: rgba(247,244,239,.5); line-height: 1.6;
+    }
+    .btn-coming-notify {
+      display: inline-block;
+      border: 1.5px solid var(--gold); color: var(--gold);
+      padding: .8rem 2rem; border-radius: var(--r);
+      font-family: var(--font-b); font-size: .9rem; font-weight: 600;
+      text-decoration: none; letter-spacing: .02em;
+      transition: all .2s ease; margin-top: 1rem;
+    }
+    .btn-coming-notify:hover {
+      background: var(--gold); color: var(--ink);
+    }
+
     /* ── CTA BANNER ── */
     .cta-section {
       background: var(--ink); padding: 100px 6%;
@@ -547,7 +610,7 @@
     @media (max-width: 900px) {
       .hero { grid-template-columns: 1fr; padding-top: 80px; }
       .hero-visual { display: none; }
-      .features-grid, .pricing-grid, .steps-grid { grid-template-columns: 1fr; }
+      .features-grid, .pricing-grid, .steps-grid, .coming-grid { grid-template-columns: 1fr; }
       .steps-grid::before { display: none; }
       .pricing-grid .price-card.featured { transform: none; }
       footer { grid-template-columns: 1fr 1fr; }
@@ -822,6 +885,100 @@
   </div>
 </section>
 
+<!-- ── COMING SOON ── -->
+<section class="coming-section">
+  <div class="section-label">Roadmap</div>
+  <h2 class="section-title">What We're Building <em>Next</em></h2>
+  <p class="section-sub">DraftPaid is just getting started. Here's what's coming for Pro and Business users.</p>
+  <p class="coming-email">Have a feature request? Email me at <a href="mailto:draftpaid@gmail.com">draftpaid@gmail.com</a></p>
+
+  <!-- PRO -->
+  <div class="coming-tier-label">Pro — Coming Soon</div>
+  <div class="coming-grid">
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🔄</div>
+      <div class="coming-title">Recurring Invoices</div>
+      <p class="coming-desc">Set up invoices that automatically send on a schedule. Perfect for retainer clients and monthly services.</p>
+    </div>
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🔔</div>
+      <div class="coming-title">Payment Reminders</div>
+      <p class="coming-desc">Automatically remind clients about unpaid invoices so you don't have to chase them.</p>
+    </div>
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">👁️</div>
+      <div class="coming-title">Invoice Tracking</div>
+      <p class="coming-desc">See when your client opened your invoice so you always know where you stand.</p>
+    </div>
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">👥</div>
+      <div class="coming-title">Client Database</div>
+      <p class="coming-desc">Save your client details once and auto-fill future invoices in seconds.</p>
+    </div>
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">💳</div>
+      <div class="coming-title">Accept Online Payments</div>
+      <p class="coming-desc">Let clients pay your invoice directly online. Funds go straight to your bank — never held by us.</p>
+    </div>
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">📱</div>
+      <div class="coming-title">Mobile App</div>
+      <p class="coming-desc">Create and send invoices from your phone. Perfect for tradespeople invoicing on the job site.</p>
+    </div>
+  </div>
+
+  <!-- BUSINESS -->
+  <div class="coming-tier-label">Business — Coming Soon</div>
+  <div class="coming-grid">
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">👨‍👩‍👧‍👦</div>
+      <div class="coming-title">Team Access</div>
+      <p class="coming-desc">Add up to 5 team members to your account. Perfect for small agencies and growing businesses.</p>
+    </div>
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🏢</div>
+      <div class="coming-title">Client Portal</div>
+      <p class="coming-desc">Give your clients their own login to view, download and pay all their invoices in one place.</p>
+    </div>
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">📊</div>
+      <div class="coming-title">Business Reports</div>
+      <p class="coming-desc">See your revenue, outstanding invoices, and top clients at a glance with clean visual reports.</p>
+    </div>
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🔗</div>
+      <div class="coming-title">API Access</div>
+      <p class="coming-desc">Connect DraftPaid to your existing tools and workflows with our developer API.</p>
+    </div>
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🎨</div>
+      <div class="coming-title">Custom Branding</div>
+      <p class="coming-desc">Add your brand colors, custom domain, and remove all DraftPaid branding from client-facing pages.</p>
+    </div>
+    <div class="coming-card">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">📧</div>
+      <div class="coming-title">Automated Email Delivery</div>
+      <p class="coming-desc">Send invoices directly to clients from DraftPaid with automatic follow-ups and read receipts.</p>
+    </div>
+  </div>
+
+  <div style="text-align:center;">
+    <a href="mailto:draftpaid@gmail.com" class="btn-coming-notify">Get notified when these launch → draftpaid@gmail.com</a>
+  </div>
+</section>
+
 <!-- ── FAQ ── -->
 <section class="section" id="faq">
   <div class="section-label">Questions</div>
@@ -938,7 +1095,7 @@
     });
   }, { threshold: 0.1 });
 
-  document.querySelectorAll('.feature-card, .step, .price-card, .faq-item').forEach(el => {
+  document.querySelectorAll('.feature-card, .step, .price-card, .faq-item, .coming-card').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
