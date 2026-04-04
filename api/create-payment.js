@@ -16,6 +16,8 @@ const CURRENCY_MAP = {
 };
 
 module.exports = async function handler(req, res) {
+  console.log('STRIPE_KEY_PREFIX:', process.env.STRIPE_SECRET_KEY?.slice(0, 12) || 'MISSING');
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
