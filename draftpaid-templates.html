@@ -299,7 +299,9 @@
   <button class="filter-btn" onclick="filterCategory('creative', this)">🎨 Creative</button>
   <button class="filter-btn" onclick="filterCategory('tech', this)">💻 Tech</button>
   <button class="filter-btn" onclick="filterCategory('health', this)">💪 Health & Fitness</button>
+  <button class="filter-btn" onclick="filterCategory('wellness', this)">🧠 Wellness</button>
   <button class="filter-btn" onclick="filterCategory('trades', this)">🔧 Trades</button>
+  <button class="filter-btn" onclick="filterCategory('hospitality', this)">🍴 Food & Hospitality</button>
 </div>
 
 <!-- ── TEMPLATES ── -->
@@ -402,6 +404,33 @@ const professions = [
         "Specify video resolution and delivery format (4K, 1080p)",
         "Charge extra for rush delivery or expedited editing",
         "Note music licensing separately — this is often overlooked",
+      ]
+    }
+  },
+
+  {
+    id: "social-media-manager",
+    category: "creative",
+    icon: "📱",
+    title: "Social Media Manager Invoice",
+    desc: "Invoices for social media management, content creation and ad campaigns.",
+    tags: ["management", "content", "ads", "strategy"],
+    color: "#F43F5E",
+    items: [
+      { desc: "Monthly Management Fee", qty: 1, price: 800 },
+      { desc: "Content Creation (10 posts)", qty: 1, price: 300 },
+      { desc: "Ad Campaign Management", qty: 1, price: 250 },
+      { desc: "Analytics Report", qty: 1, price: 100 },
+      { desc: "Strategy Consultation", qty: 1, price: 150 },
+    ],
+    seo: {
+      heading: "How to invoice as a social media manager",
+      body: "Social media managers typically charge a flat monthly retainer covering management, content creation, and reporting. Break out ad campaign management separately since ad spend budgets vary. Clients appreciate seeing content creation as its own line item — it makes the creative work visible and justifies your fees.",
+      tips: [
+        "Invoice monthly retainers on the 1st for predictable cash flow",
+        "Separate ad spend budgets from your management fees",
+        "Include number of platforms managed in your line item descriptions",
+        "Add a rush rate for same-day content requests",
       ]
     }
   },
@@ -566,6 +595,33 @@ const professions = [
     }
   },
 
+  {
+    id: "life-coach",
+    category: "wellness",
+    icon: "🧠",
+    title: "Life Coach Invoice",
+    desc: "Professional invoices for coaching sessions, programs and consultations.",
+    tags: ["coaching", "sessions", "workshops", "programs"],
+    color: "#7C3AED",
+    items: [
+      { desc: "1:1 Coaching Session (60 min)", qty: 1, price: 150 },
+      { desc: "Monthly Coaching Package", qty: 1, price: 600 },
+      { desc: "Group Workshop (per person)", qty: 1, price: 75 },
+      { desc: "Initial Assessment", qty: 1, price: 100 },
+      { desc: "Email Support (monthly)", qty: 1, price: 200 },
+    ],
+    seo: {
+      heading: "How to invoice as a life coach",
+      body: "Life coaches commonly sell monthly packages rather than individual sessions — this improves client commitment and creates predictable income. Invoice at the start of each month or package period. Separate your assessment fee from ongoing coaching so new clients understand the onboarding process and pricing clearly.",
+      tips: [
+        "Sell monthly packages instead of one-off sessions where possible",
+        "Invoice package fees upfront to reduce chasing late payments",
+        "List your cancellation policy in the invoice notes section",
+        "Offer a discounted rate for 3- or 6-month prepaid commitments",
+      ]
+    }
+  },
+
   // ── TRADES ────────────────────────────────
   {
     id: "plumber",
@@ -645,6 +701,86 @@ const professions = [
       ]
     }
   },
+  {
+    id: "carpenter",
+    category: "trades",
+    icon: "🪚",
+    title: "Carpenter Invoice",
+    desc: "Invoices for carpentry, woodworking and custom furniture projects.",
+    tags: ["carpentry", "woodworking", "furniture", "installation"],
+    color: "#92400E",
+    items: [
+      { desc: "Labour (hourly rate)", qty: 8, price: 85 },
+      { desc: "Materials (lumber & hardware)", qty: 1, price: 320 },
+      { desc: "Custom Design Fee", qty: 1, price: 150 },
+      { desc: "Delivery & Installation", qty: 1, price: 100 },
+      { desc: "Project Consultation", qty: 1, price: 75 },
+    ],
+    seo: {
+      heading: "How to invoice for carpentry and woodworking",
+      body: "Carpentry invoices should clearly separate labour from materials — clients need this for home renovation records and insurance purposes. Always list material costs at cost price plus a standard markup. Custom design work and consultations should be billed as separate line items to demonstrate the full scope of your expertise.",
+      tips: [
+        "Always separate labour from materials on the invoice",
+        "Add a 15-20% markup on materials as standard practice",
+        "Require a 50% deposit for custom furniture projects",
+        "Note the estimated completion date in your invoice notes",
+      ]
+    }
+  },
+  {
+    id: "auto-mechanic",
+    category: "trades",
+    icon: "🔩",
+    title: "Auto Mechanic Invoice",
+    desc: "Invoices for vehicle repairs, maintenance and diagnostic services.",
+    tags: ["repairs", "diagnostic", "maintenance", "parts"],
+    color: "#374151",
+    items: [
+      { desc: "Diagnostic Fee", qty: 1, price: 95 },
+      { desc: "Labour (hourly rate)", qty: 3, price: 85 },
+      { desc: "Parts & Materials", qty: 1, price: 180 },
+      { desc: "Oil Change & Filter", qty: 1, price: 65 },
+      { desc: "Shop Supplies", qty: 1, price: 25 },
+    ],
+    seo: {
+      heading: "How to write a professional auto repair invoice",
+      body: "Auto repair invoices should always separate diagnostic fees, labour, and parts clearly. Customers expect to see this breakdown — it builds trust and reduces disputes. List the vehicle make, model, and year in your notes section, and include any warranty information on parts and labour to stand behind your work.",
+      tips: [
+        "Always list the vehicle make, model, and year in the notes",
+        "Separate diagnostic fees from repair labour charges",
+        "Note warranty period on parts and workmanship",
+        "Add a shop supplies line item to cover consumables",
+      ]
+    }
+  },
+
+  // ── FOOD & HOSPITALITY ───────────────────
+  {
+    id: "personal-chef",
+    category: "hospitality",
+    icon: "👨‍🍳",
+    title: "Personal Chef Invoice",
+    desc: "Invoices for private cooking services, meal prep and catering.",
+    tags: ["cooking", "meal prep", "catering", "private"],
+    color: "#DC2626",
+    items: [
+      { desc: "Chef Service Fee (per session)", qty: 1, price: 300 },
+      { desc: "Grocery & Ingredient Costs", qty: 1, price: 150 },
+      { desc: "Weekly Meal Prep Package", qty: 1, price: 250 },
+      { desc: "Special Dietary Consultation", qty: 1, price: 75 },
+      { desc: "Equipment & Travel", qty: 1, price: 50 },
+    ],
+    seo: {
+      heading: "How personal chefs should invoice clients",
+      body: "Personal chef invoices should clearly separate your service fee from ingredient costs — clients need to see this distinction for budgeting and trust. Always present grocery costs at cost price to avoid disputes. Weekly meal prep packages are best invoiced at the start of each week, and special dietary consultations should be billed separately as a professional service.",
+      tips: [
+        "Always separate your chef fee from ingredient/grocery costs",
+        "Invoice grocery costs at actual cost to maintain client trust",
+        "Offer weekly or monthly meal prep packages for recurring income",
+        "Include a menu planning consultation as a separate line item",
+      ]
+    }
+  },
 ];
 
 /* ══════════════════════════════════════════════
@@ -657,10 +793,12 @@ function calcTotal(items) {
 function renderTemplates(filter = 'all') {
   const container = document.getElementById('templates-container');
   const categories = [
-    { id: 'creative', label: '🎨 Creative', emoji: '🎨' },
-    { id: 'tech',     label: '💻 Tech & Writing', emoji: '💻' },
-    { id: 'health',   label: '💪 Health & Fitness', emoji: '💪' },
-    { id: 'trades',   label: '🔧 Trades', emoji: '🔧' },
+    { id: 'creative',     label: '🎨 Creative', emoji: '🎨' },
+    { id: 'tech',         label: '💻 Tech & Writing', emoji: '💻' },
+    { id: 'health',       label: '💪 Health & Fitness', emoji: '💪' },
+    { id: 'wellness',     label: '🧠 Wellness', emoji: '🧠' },
+    { id: 'trades',       label: '🔧 Trades', emoji: '🔧' },
+    { id: 'hospitality',  label: '🍴 Food & Hospitality', emoji: '🍴' },
   ];
 
   container.innerHTML = categories.map(cat => {
