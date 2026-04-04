@@ -574,6 +574,70 @@
       body { background: white; }
       .invoice-preview { box-shadow: none; border: none; }
     }
+
+    /* ── PAY NOW CARD ── */
+    .pay-toggle-row {
+      display: flex; align-items: center; gap: .65rem;
+      cursor: pointer; font-size: .9rem; color: var(--ink);
+    }
+    .pay-toggle-row input[type="checkbox"] {
+      width: 16px; height: 16px; margin: 0;
+      accent-color: var(--gold); cursor: pointer; flex-shrink: 0;
+    }
+    .pay-options { margin-top: 1.1rem; }
+    .pay-amount-display {
+      font-family: var(--font-mono); font-size: .82rem; color: var(--muted);
+      margin-bottom: 1rem; background: var(--paper);
+      padding: .5rem .75rem; border-radius: var(--radius); border: 1px solid var(--border);
+    }
+    .pay-amount-display strong { color: var(--ink); }
+    .btn-generate {
+      background: var(--ink); color: var(--paper);
+      border: none; border-radius: var(--radius);
+      font-family: var(--font-body); font-size: .85rem; font-weight: 600;
+      padding: .65rem 1.4rem; cursor: pointer; transition: all .18s; letter-spacing: .03em;
+    }
+    .btn-generate:hover { background: var(--gold); color: var(--ink); }
+    .btn-generate:disabled { opacity: .5; cursor: default; transform: none !important; box-shadow: none !important; }
+    .pay-link-box {
+      margin-top: 1rem; padding: 1rem;
+      background: var(--paper); border: 1.5px solid var(--gold); border-radius: var(--radius);
+    }
+    .pay-link-label {
+      font-family: var(--font-mono); font-size: .65rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: .6rem;
+    }
+    .pay-link-row { display: flex; gap: .5rem; align-items: center; }
+    .pay-link-row input {
+      flex: 1; font-family: var(--font-mono); font-size: .75rem;
+      background: var(--white); color: var(--ink);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: .45rem .7rem; cursor: text;
+    }
+    .pay-link-copy {
+      background: var(--ink); color: var(--paper); border: none;
+      border-radius: var(--radius); font-size: .75rem; font-family: var(--font-mono);
+      padding: .45rem .9rem; cursor: pointer; white-space: nowrap; transition: background .15s;
+    }
+    .pay-link-copy:hover { background: var(--gold); color: var(--ink); }
+    .pay-link-note { font-size: .78rem; color: var(--muted); margin-top: .6rem; line-height: 1.55; }
+    .pay-stale-warning {
+      display: none; margin-top: .65rem; padding: .55rem .85rem;
+      background: #fef3cd; border: 1px solid #f0c040; border-radius: var(--radius);
+      font-size: .78rem; color: #7a5a00; font-family: var(--font-mono);
+    }
+    .pay-upgrade-prompt {
+      background: var(--paper); border: 1.5px dashed var(--border);
+      border-radius: var(--radius); padding: 1.1rem; text-align: center;
+    }
+    .pay-upgrade-prompt p { font-size: .85rem; color: var(--muted); margin-bottom: .75rem; line-height: 1.55; }
+    .btn-upgrade-sm {
+      background: var(--gold); color: var(--ink); border: none;
+      border-radius: var(--radius); font-family: var(--font-body); font-size: .82rem;
+      font-weight: 600; padding: .55rem 1.3rem; cursor: pointer; transition: all .18s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-upgrade-sm:hover { background: #b8942f; }
   </style>
 </head>
 <body>
@@ -735,6 +799,55 @@
 
     </div>
 
+    <!-- Online Payment — Pro only -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-dot"></div>
+        <h2>Online Payment</h2>
+      </div>
+      <div class="card-body">
+
+        <!-- Free users see upgrade prompt -->
+        <div class="pay-upgrade-prompt" id="pay-upgrade-section">
+          <p>Enable <strong>Pay Now</strong> on your invoices so clients can pay with a card, Apple Pay, or Google Pay — powered by Stripe.</p>
+          <a href="https://buy.stripe.com/8x2cN5gB5ekDet1bHFgnK00" class="btn-upgrade-sm">Upgrade to Pro — $9/month →</a>
+        </div>
+
+        <!-- Pro users get the full feature -->
+        <div id="pay-pro-section" style="display:none">
+          <label class="pay-toggle-row">
+            <input type="checkbox" id="pay-now-toggle" onchange="onPayNowToggle()" />
+            Accept online payment for this invoice
+          </label>
+
+          <div class="pay-options" id="pay-options" style="display:none">
+            <div class="pay-amount-display">
+              Invoice total: <strong id="pay-amount-preview">$0.00</strong>
+              — your client will be charged this amount
+            </div>
+            <button class="btn-generate" id="btn-generate" onclick="generatePaymentLink()">
+              ⚡ Generate Pay Now Link
+            </button>
+            <div class="pay-stale-warning" id="pay-stale-warning">
+              ⚠ Invoice total changed — regenerate the link to update the payment amount.
+            </div>
+            <div class="pay-link-box" id="pay-link-box" style="display:none">
+              <div class="pay-link-label">✓ Payment link ready — paste into your invoice email</div>
+              <div class="pay-link-row">
+                <input type="text" id="pay-link-input" readonly />
+                <button class="pay-link-copy" onclick="copyPayLink()">Copy</button>
+              </div>
+              <p class="pay-link-note">
+                Paste this link in your email when sending the invoice.
+                The <strong>Pay Now</strong> button also appears on the invoice PDF.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div><!-- end editor -->
 
 </div><!-- end app -->
@@ -777,6 +890,8 @@
     { desc: "Web Design & Development", qty: 1, price: 1500 },
     { desc: "Logo & Brand Identity",    qty: 1, price: 500  },
   ];
+  let currentPaymentUrl  = null;  // set after generating a pay link
+  let paymentLinkAmount  = null;  // amount used when link was last generated
 
   /* ── LOAD TEMPLATE FROM sessionStorage (profession templates) ── */
   function loadTemplateFromStorage() {
@@ -976,6 +1091,7 @@
     document.getElementById("subtotal-display").textContent = cur + subtotal.toFixed(2);
     document.getElementById("tax-display").textContent      = cur + tax.toFixed(2);
     document.getElementById("total-display").textContent    = cur + total.toFixed(2);
+    updatePayAmountPreview();
   }
 
   /* ── PREVIEW MODAL ── */
@@ -1075,6 +1191,13 @@
 
       ${notes ? `<div class="inv-note">${notes}</div>` : ""}
 
+      ${(currentPaymentUrl && document.getElementById('pay-now-toggle')?.checked) ? `
+      <div style="margin-top:2rem;padding:1.25rem;background:#faf7ef;border:1.5px solid #c9a84c;border-radius:4px;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:#7a7469;margin-bottom:.75rem;">Pay this invoice online</div>
+        <a href="${escapeHtml(currentPaymentUrl)}" style="display:inline-block;background:#c9a84c;color:#0f0e0c;padding:.65rem 2rem;border-radius:4px;text-decoration:none;font-weight:600;font-size:.9rem;font-family:'DM Sans',sans-serif;">Pay Now →</a>
+        <div style="margin-top:.65rem;font-family:'DM Mono',monospace;font-size:.6rem;color:#7a7469;word-break:break-all;">${escapeHtml(currentPaymentUrl)}</div>
+      </div>` : ""}
+
       ${localStorage.getItem('draftpaid_pro') !== 'true' ? '<div class="inv-footer">Created with DraftPaid &bull; draftpaid.com</div>' : ""}
     `;
   }
@@ -1150,6 +1273,10 @@
   function applyProUI(isPro) {
     const badge = document.getElementById("pro-badge");
     if (badge) badge.style.display = isPro ? 'inline' : 'none';
+    const upgradeSection = document.getElementById('pay-upgrade-section');
+    const proSection     = document.getElementById('pay-pro-section');
+    if (upgradeSection) upgradeSection.style.display = isPro ? 'none' : '';
+    if (proSection)     proSection.style.display     = isPro ? '' : 'none';
   }
 
   function updateAccountMenu(email) {
@@ -1235,6 +1362,109 @@
     t.textContent = msg;
     t.classList.add("show");
     setTimeout(() => t.classList.remove("show"), 2800);
+  }
+
+  /* ── PAY NOW ── */
+  function updatePayAmountPreview() {
+    const cur   = document.getElementById('inv-currency')?.value || '$';
+    const total = parseFloat(
+      document.getElementById('total-display')?.textContent?.replace(/[^0-9.]/g, '')
+    ) || 0;
+    const el = document.getElementById('pay-amount-preview');
+    if (el) el.textContent = cur + total.toFixed(2);
+    // Warn if amount changed since link was generated
+    if (currentPaymentUrl && paymentLinkAmount !== null) {
+      const changed = Math.abs(total - paymentLinkAmount) > 0.001;
+      const warning = document.getElementById('pay-stale-warning');
+      if (warning) warning.style.display = changed ? '' : 'none';
+    }
+  }
+
+  function onPayNowToggle() {
+    const enabled = document.getElementById('pay-now-toggle').checked;
+    document.getElementById('pay-options').style.display = enabled ? '' : 'none';
+    if (!enabled) {
+      currentPaymentUrl = null;
+      paymentLinkAmount = null;
+      document.getElementById('pay-link-box').style.display = 'none';
+      document.getElementById('pay-stale-warning').style.display = 'none';
+    }
+    updatePayAmountPreview();
+  }
+
+  async function generatePaymentLink() {
+    const cur   = document.getElementById('inv-currency')?.value || '$';
+    const total = parseFloat(
+      document.getElementById('total-display')?.textContent?.replace(/[^0-9.]/g, '')
+    ) || 0;
+
+    if (total <= 0) {
+      toast('Add line items before generating a payment link.');
+      return;
+    }
+
+    // Get Supabase session token (server verifies identity — cannot be spoofed)
+    let accessToken = '';
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      accessToken = session?.access_token || '';
+    } catch(e) {}
+
+    if (!accessToken) {
+      toast('Please sign in to generate payment links.');
+      return;
+    }
+
+    const btn = document.getElementById('btn-generate');
+    btn.disabled    = true;
+    btn.textContent = 'Generating…';
+
+    try {
+      const res = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          amount:          total,
+          currencySymbol:  cur,
+          invoiceNumber:   v('inv-number')  || 'INV-001',
+          clientName:      v('to-name')     || '',
+          clientEmail:     v('to-email')    || '',
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to generate link');
+
+      currentPaymentUrl = data.url;
+      paymentLinkAmount = total;
+
+      document.getElementById('pay-link-input').value = data.url;
+      document.getElementById('pay-link-box').style.display = '';
+      document.getElementById('pay-stale-warning').style.display = 'none';
+      toast('✓ Payment link created!');
+
+    } catch(err) {
+      toast('Error: ' + err.message);
+      console.error('generatePaymentLink:', err);
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = '⚡ Generate Pay Now Link';
+    }
+  }
+
+  function copyPayLink() {
+    const input = document.getElementById('pay-link-input');
+    if (!input?.value) return;
+    navigator.clipboard.writeText(input.value)
+      .then(() => toast('✓ Payment link copied!'))
+      .catch(() => {
+        input.select();
+        document.execCommand('copy');
+        toast('✓ Copied!');
+      });
   }
 </script>
 </body>

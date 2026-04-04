@@ -48,6 +48,22 @@ module.exports = async function handler(req, res) {
 
       case 'checkout.session.completed': {
         const session = event.data.object;
+
+        // ── Invoice payment (Pay Now feature) ──
+        if (session.metadata?.type === 'invoice_payment') {
+          await supabase
+            .from('invoice_payments')
+            .update({
+              payment_status:           'paid',
+              paid_at:                   now,
+              stripe_payment_intent_id:  session.payment_intent || null,
+            })
+            .eq('stripe_session_id', session.id);
+          console.log(`Invoice payment completed: session ${session.id}`);
+          break;
+        }
+
+        // ── Pro subscription activation ──
         const email    = session.customer_email;
         const customer = session.customer;
 
