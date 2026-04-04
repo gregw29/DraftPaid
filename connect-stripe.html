@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M1Q2BRZ5VS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-M1Q2BRZ5VS');
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connect Your Stripe Account — DraftPaid</title>
+  <meta name="description" content="Connect your Stripe account to DraftPaid Pro to accept online payments directly from your clients."/>
+  <meta name="robots" content="noindex"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink:    #0a0908;
+      --off:    #f7f4ef;
+      --cream:  #ede9de;
+      --gold:   #c8a951;
+      --gold-lt:#e8d48e;
+      --muted:  #6b6560;
+      --border: #ddd9d0;
+      --white:  #ffffff;
+      --green:  #2d7a4f;
+      --r: 8px;
+      --font-d: "Playfair Display", Georgia, serif;
+      --font-b: "Outfit", sans-serif;
+      --font-m: "JetBrains Mono", monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-b); background: var(--off); color: var(--ink); min-height: 100vh; }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--ink); color: var(--off);
+      padding: 0 5%; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: var(--font-d); font-size: 1.25rem; color: var(--gold-lt); text-decoration: none; }
+    .nav-logo span { color: var(--off); font-style: italic; }
+    .nav-back { font-size: .82rem; color: rgba(247,244,239,.5); text-decoration: none; transition: color .18s; }
+    .nav-back:hover { color: var(--gold-lt); }
+
+    /* ── PAGE ── */
+    .page { max-width: 560px; margin: 4rem auto; padding: 0 1.5rem 6rem; }
+
+    .page-label {
+      font-family: var(--font-m); font-size: .68rem;
+      color: var(--muted); letter-spacing: .14em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    h1 {
+      font-family: var(--font-d); font-size: 2rem;
+      font-weight: 900; margin-bottom: .75rem; line-height: 1.2;
+    }
+    h1 em { color: var(--gold); font-style: italic; }
+    .subtitle {
+      font-size: .95rem; color: var(--muted);
+      line-height: 1.7; margin-bottom: 2.5rem;
+    }
+
+    /* ── STATUS CARD ── */
+    .status-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--r); overflow: hidden;
+      box-shadow: 0 4px 24px rgba(10,9,8,.07);
+      margin-bottom: 1.5rem;
+    }
+    .status-header {
+      background: var(--cream); border-bottom: 1px solid var(--border);
+      padding: .85rem 1.4rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .status-dot.gold    { background: var(--gold); }
+    .status-dot.green   { background: #22c55e; }
+    .status-dot.muted   { background: var(--border); }
+    .status-dot.amber   { background: #f59e0b; }
+    .status-header span {
+      font-family: var(--font-m); font-size: .7rem;
+      font-weight: 500; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .status-body { padding: 1.75rem 1.4rem; }
+
+    /* ── STATES ── */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    /* Loading */
+    .loading-row {
+      display: flex; align-items: center; gap: .75rem;
+      font-size: .88rem; color: var(--muted); font-family: var(--font-m);
+    }
+    .spinner {
+      width: 18px; height: 18px; border: 2px solid var(--border);
+      border-top-color: var(--gold); border-radius: 50%;
+      animation: spin .7s linear infinite; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Not connected */
+    .benefits { list-style: none; margin: 1rem 0 1.5rem; }
+    .benefits li {
+      display: flex; align-items: flex-start; gap: .6rem;
+      font-size: .88rem; color: var(--muted); line-height: 1.5;
+      padding: .35rem 0;
+    }
+    .benefits li::before {
+      content: '✓'; color: var(--gold);
+      font-family: var(--font-m); font-size: .8rem;
+      margin-top: .1rem; flex-shrink: 0;
+    }
+
+    /* Connected */
+    .connected-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: #f0fdf4; border: 1.5px solid #86efac;
+      border-radius: 99px; padding: .35rem .9rem;
+      font-family: var(--font-m); font-size: .72rem;
+      color: var(--green); font-weight: 500;
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+    .connected-details {
+      font-size: .85rem; color: var(--muted); line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Pending */
+    .pending-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: #fffbeb; border: 1.5px solid #fcd34d;
+      border-radius: 99px; padding: .35rem .9rem;
+      font-family: var(--font-m); font-size: .72rem;
+      color: #92400e; font-weight: 500;
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+    .pending-details {
+      font-size: .85rem; color: var(--muted); line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-connect {
+      display: block; width: 100%;
+      background: var(--gold); color: var(--ink);
+      border: none; border-radius: var(--r);
+      font-family: var(--font-b); font-size: .95rem;
+      font-weight: 600; padding: .9rem;
+      cursor: pointer; transition: all .2s;
+      letter-spacing: .02em; text-align: center;
+      text-decoration: none;
+    }
+    .btn-connect:hover { background: #b8942f; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(200,169,81,.3); }
+    .btn-connect:disabled { opacity: .5; cursor: default; transform: none; box-shadow: none; }
+    .btn-outline-sm {
+      display: inline-block;
+      background: transparent; color: var(--muted);
+      border: 1.5px solid var(--border); border-radius: var(--r);
+      font-family: var(--font-b); font-size: .82rem;
+      font-weight: 500; padding: .55rem 1.1rem;
+      cursor: pointer; transition: all .2s; text-decoration: none;
+    }
+    .btn-outline-sm:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── UPGRADE WALL (free users) ── */
+    .upgrade-wall {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 2.5rem 1.75rem;
+      text-align: center; box-shadow: 0 4px 24px rgba(10,9,8,.07);
+    }
+    .upgrade-wall h2 {
+      font-family: var(--font-d); font-size: 1.4rem;
+      margin-bottom: .75rem;
+    }
+    .upgrade-wall p { font-size: .88rem; color: var(--muted); line-height: 1.7; margin-bottom: 1.5rem; }
+
+    /* ── NOT LOGGED IN ── */
+    .auth-wall { text-align: center; padding: 2.5rem 1.75rem; }
+    .auth-wall p { font-size: .9rem; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.7; }
+
+    /* ── ERROR TOAST ── */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--ink); color: var(--off);
+      padding: .8rem 1.4rem; border-radius: 6px;
+      font-size: .85rem; font-family: var(--font-m);
+      letter-spacing: .04em; box-shadow: 0 8px 32px rgba(10,9,8,.2);
+      opacity: 0; transform: translateY(8px);
+      transition: all .25s ease; pointer-events: none; z-index: 999;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 600px) { .page { margin-top: 2rem; } h1 { font-size: 1.6rem; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>Draft</span>Paid</a>
+  <a href="invoice-generator.html" class="nav-back">← Back to invoice</a>
+</nav>
+
+<div class="page">
+  <div class="page-label">Pro feature</div>
+  <h1>Connect your <em>Stripe</em> account</h1>
+  <p class="subtitle">
+    Accept online payments from clients directly to your bank account.
+    Powered by Stripe Express — setup takes about 5 minutes.
+  </p>
+
+  <!-- Loading state -->
+  <div class="status-card" id="loading-card">
+    <div class="status-header">
+      <div class="status-dot gold"></div>
+      <span>Checking status</span>
+    </div>
+    <div class="status-body">
+      <div class="loading-row">
+        <div class="spinner"></div>
+        <span>Loading your account details…</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main status card (shown after load) -->
+  <div class="status-card" id="main-card" style="display:none">
+    <div class="status-header" id="card-header">
+      <div class="status-dot muted" id="header-dot"></div>
+      <span id="header-label">Stripe Payments</span>
+    </div>
+    <div class="status-body">
+
+      <!-- STATE: not connected -->
+      <div class="state" id="state-not-connected">
+        <ul class="benefits">
+          <li>Clients pay by card, Apple Pay, or Google Pay</li>
+          <li>Money goes directly to your bank account via Stripe</li>
+          <li>Stripe handles all fraud protection and disputes</li>
+          <li>Setup takes ~5 minutes — powered by Stripe Express</li>
+        </ul>
+        <button class="btn-connect" id="btn-start-connect" onclick="startConnect()">
+          Connect Stripe Account →
+        </button>
+      </div>
+
+      <!-- STATE: incomplete / refresh (started but not finished) -->
+      <div class="state" id="state-incomplete">
+        <div class="pending-badge">⏳ Setup incomplete</div>
+        <p class="pending-details">
+          You started connecting your Stripe account but haven't finished yet.
+          Click below to pick up where you left off.
+        </p>
+        <button class="btn-connect" id="btn-resume-connect" onclick="startConnect()">
+          Continue Stripe Setup →
+        </button>
+      </div>
+
+      <!-- STATE: pending (submitted, awaiting Stripe verification) -->
+      <div class="state" id="state-pending">
+        <div class="pending-badge">⏳ Awaiting Stripe verification</div>
+        <p class="pending-details">
+          You've submitted your details. Stripe is reviewing your account —
+          this usually takes a few hours. You'll receive an email from Stripe
+          when your account is ready to accept payments.
+        </p>
+        <a href="https://connect.stripe.com/express_login" target="_blank" rel="noopener" class="btn-outline-sm">
+          View Stripe Express Dashboard ↗
+        </a>
+      </div>
+
+      <!-- STATE: active / connected -->
+      <div class="state" id="state-active">
+        <div class="connected-badge">✓ Connected &amp; Active</div>
+        <p class="connected-details">
+          Your Stripe account is connected and ready to accept payments.
+          When clients click <strong>Pay Now</strong> on your invoices,
+          the money goes directly to your Stripe account and then to your bank.
+        </p>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+          <a href="invoice-generator.html" class="btn-connect" style="width:auto;display:inline-block;">
+            Create an Invoice →
+          </a>
+          <a href="https://connect.stripe.com/express_login" target="_blank" rel="noopener" class="btn-outline-sm">
+            Stripe Dashboard ↗
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Auth wall (not logged in) -->
+  <div id="auth-wall" style="display:none">
+    <div class="status-card">
+      <div class="status-header">
+        <div class="status-dot muted"></div>
+        <span>Sign in required</span>
+      </div>
+      <div class="status-body auth-wall">
+        <p>Sign in to your DraftPaid account to connect Stripe and enable online payments.</p>
+        <a href="auth.html" class="btn-connect" style="display:inline-block;width:auto;">Sign In →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upgrade wall (free users) -->
+  <div id="upgrade-wall" style="display:none">
+    <div class="upgrade-wall">
+      <h2>Pro feature</h2>
+      <p>Stripe Connect and online payment collection is available on DraftPaid Pro.
+         Upgrade to enable Pay Now on your invoices.</p>
+      <a href="https://buy.stripe.com/8x2cN5gB5ekDet1bHFgnK00" class="btn-connect" style="display:inline-block;width:auto;">
+        Upgrade to Pro — $9/month →
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const SUPA_URL = 'https://cvgbtprhovdtwygzilyx.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2Z2J0cHJob3ZkdHd5Z3ppbHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NTY1MTIsImV4cCI6MjA5MDMzMjUxMn0.iYuluH3j3b8bTT0UzHH9SxcHksycPMee0En4UEZvIy0';
+  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  const params = new URLSearchParams(window.location.search);
+  const isReturn  = params.get('return')  === 'true';
+  const isRefresh = params.get('refresh') === 'true';
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    // Get session
+    const { data: { session } } = await sb.auth.getSession();
+    const user = session?.user;
+
+    if (!user) {
+      hide('loading-card');
+      show('auth-wall');
+      return;
+    }
+
+    // Check Pro status
+    const { data: sub } = await sb
+      .from('subscriptions')
+      .select('status, stripe_connect_id, stripe_connect_status, stripe_connect_charges_enabled, stripe_connect_payouts_enabled')
+      .eq('email', user.email)
+      .single();
+
+    if (!sub || sub.status !== 'pro') {
+      hide('loading-card');
+      show('upgrade-wall');
+      return;
+    }
+
+    // Handle return from Stripe onboarding
+    if (isReturn && sub.stripe_connect_id) {
+      await checkReturnStatus(session.access_token);
+      return;
+    }
+
+    // Handle expired link refresh — auto-restart onboarding
+    if (isRefresh) {
+      toast('Generating a fresh onboarding link…');
+      await startConnect();
+      return;
+    }
+
+    // Normal page load — show current status
+    showStatus(sub.stripe_connect_status || 'not_connected', sub);
+  });
+
+  async function checkReturnStatus(token) {
+    try {
+      const res = await fetch('/api/stripe-connect-return', {
+        method: 'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Status check failed');
+      showStatus(data.status, data);
+    } catch (err) {
+      toast('Error checking status: ' + err.message);
+      showStatus('not_connected', {});
+    }
+  }
+
+  async function startConnect() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session?.access_token) {
+      toast('Session expired — please sign in again.');
+      return;
+    }
+
+    const btn1 = document.getElementById('btn-start-connect');
+    const btn2 = document.getElementById('btn-resume-connect');
+    if (btn1) { btn1.disabled = true; btn1.textContent = 'Redirecting to Stripe…'; }
+    if (btn2) { btn2.disabled = true; btn2.textContent = 'Redirecting to Stripe…'; }
+
+    try {
+      const res = await fetch('/api/stripe-connect-onboard', {
+        method: 'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to start onboarding');
+      window.location.href = data.url;
+    } catch (err) {
+      toast('Error: ' + err.message);
+      if (btn1) { btn1.disabled = false; btn1.textContent = 'Connect Stripe Account →'; }
+      if (btn2) { btn2.disabled = false; btn2.textContent = 'Continue Stripe Setup →'; }
+    }
+  }
+
+  function showStatus(status, data) {
+    hide('loading-card');
+    show('main-card');
+
+    // Reset all states
+    document.querySelectorAll('.state').forEach(el => el.classList.remove('active'));
+
+    const dot   = document.getElementById('header-dot');
+    const label = document.getElementById('header-label');
+
+    if (status === 'active' || (data?.chargesEnabled && data?.payoutsEnabled)) {
+      dot.className   = 'status-dot green';
+      label.textContent = 'Connected — Ready to accept payments';
+      document.getElementById('state-active').classList.add('active');
+    } else if (status === 'pending') {
+      dot.className   = 'status-dot amber';
+      label.textContent = 'Awaiting Stripe verification';
+      document.getElementById('state-pending').classList.add('active');
+    } else if (status === 'incomplete') {
+      dot.className   = 'status-dot amber';
+      label.textContent = 'Setup incomplete';
+      document.getElementById('state-incomplete').classList.add('active');
+    } else {
+      dot.className   = 'status-dot muted';
+      label.textContent = 'Not connected';
+      document.getElementById('state-not-connected').classList.add('active');
+    }
+  }
+
+  function show(id) { const el = document.getElementById(id); if (el) el.style.display = ''; }
+  function hide(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+
+</body>
+</html>

@@ -36,16 +36,19 @@ module.exports = async function handler(req, res) {
 
   const userEmail = user.email;
 
-  // ── PRO CHECK: verify via DB, not just client-provided email ──
+  // ── PRO CHECK + fetch Connect status ──
   const { data: sub, error: subErr } = await supabase
     .from('subscriptions')
-    .select('status')
+    .select('status, stripe_connect_id, stripe_connect_charges_enabled')
     .eq('email', userEmail)
     .single();
 
   if (subErr || sub?.status !== 'pro') {
     return res.status(403).json({ error: 'Pro subscription required for payment links' });
   }
+
+  const connectId      = sub?.stripe_connect_id || null;
+  const chargesEnabled = sub?.stripe_connect_charges_enabled || false;
 
   // ── PARSE BODY ──
   let body;
@@ -97,13 +100,25 @@ module.exports = async function handler(req, res) {
         client_email:    clientEmail || '',
         client_name:     clientName  || '',
       },
-      payment_intent_data: {
-        description: `Invoice ${invoiceNumber}${clientName ? ` — ${clientName}` : ''}`,
-        metadata: {
-          invoice_number: invoiceNumber,
-          user_email:     userEmail,
-        },
-      },
+      payment_intent_data: (() => {
+        const pid = {
+          description: `Invoice ${invoiceNumber}${clientName ? ` — ${clientName}` : ''}`,
+          metadata: {
+            invoice_number: invoiceNumber,
+            user_email:     userEmail,
+          },
+        };
+        // Route payment to user's connected Stripe account if fully onboarded
+        if (connectId && chargesEnabled) {
+          pid.transfer_data = { destination: connectId };
+          // Optional platform fee (set to 0 for now — adjust when monetising)
+          // pid.application_fee_amount = Math.round(unitAmount * 0.01);
+          console.log(`Routing to connected account: ${connectId}`);
+        } else {
+          console.log('No active connect account — payment routes to platform');
+        }
+        return pid;
+      })(),
     });
 
     // ── STORE IN SUPABASE ──
@@ -119,7 +134,11 @@ module.exports = async function handler(req, res) {
       payment_status:    'pending',
     });
 
-    return res.status(200).json({ url: session.url, sessionId: session.id });
+    return res.status(200).json({
+      url:          session.url,
+      sessionId:    session.id,
+      connectReady: !!(connectId && chargesEnabled),
+    });
 
   } catch (err) {
     console.error('create-payment error:', err);

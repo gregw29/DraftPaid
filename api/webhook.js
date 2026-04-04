@@ -131,6 +131,36 @@ module.exports = async function handler(req, res) {
         break;
       }
 
+      // ── Stripe Connect account capability updates ──
+      case 'account.updated': {
+        const account = event.data.object;
+        const chargesEnabled = account.charges_enabled;
+        const payoutsEnabled = account.payouts_enabled;
+        const detailsSubmitted = account.details_submitted;
+
+        let connectStatus;
+        if (chargesEnabled && payoutsEnabled) {
+          connectStatus = 'active';
+        } else if (detailsSubmitted) {
+          connectStatus = 'pending';
+        } else {
+          connectStatus = 'incomplete';
+        }
+
+        await supabase
+          .from('subscriptions')
+          .update({
+            stripe_connect_status:          connectStatus,
+            stripe_connect_charges_enabled: chargesEnabled,
+            stripe_connect_payouts_enabled: payoutsEnabled,
+            updated_at:                     now,
+          })
+          .eq('stripe_connect_id', account.id);
+
+        console.log(`account.updated ${account.id}: status=${connectStatus}, charges=${chargesEnabled}, payouts=${payoutsEnabled}`);
+        break;
+      }
+
       default:
         // Unhandled event type — acknowledge and ignore
         console.log(`Unhandled event type: ${event.type}`);
