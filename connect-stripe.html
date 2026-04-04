@@ -147,6 +147,35 @@
       margin-bottom: 1.5rem;
     }
 
+    /* Payouts disabled */
+    .warn-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: #fff7ed; border: 1.5px solid #fdba74;
+      border-radius: 99px; padding: .35rem .9rem;
+      font-family: var(--font-m); font-size: .72rem;
+      color: #9a3412; font-weight: 500;
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+    .warn-details {
+      font-size: .85rem; color: var(--muted); line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    /* Active state status rows */
+    .connect-status-rows { margin-bottom: 1.25rem; }
+    .connect-status-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .5rem 0; border-bottom: 1px solid var(--border);
+    }
+    .connect-status-row:last-child { border-bottom: none; }
+    .row-label { font-family: var(--font-m); font-size: .75rem; color: var(--muted); letter-spacing: .04em; }
+    .status-pill {
+      font-family: var(--font-m); font-size: .65rem; letter-spacing: .08em;
+      text-transform: uppercase; padding: .2rem .65rem; border-radius: 99px;
+    }
+    .status-pill.on  { background: #f0fdf4; color: var(--green); border: 1px solid #86efac; }
+    .status-pill.off { background: #fef2f2; color: #991b1b;      border: 1px solid #fca5a5; }
+
     /* ── BUTTONS ── */
     .btn-connect {
       display: block; width: 100%;
@@ -254,31 +283,36 @@
       <!-- STATE: incomplete / refresh (started but not finished) -->
       <div class="state" id="state-incomplete">
         <div class="pending-badge">⏳ Setup incomplete</div>
-        <p class="pending-details">
-          You started connecting your Stripe account but haven't finished yet.
-          Click below to pick up where you left off.
+        <p class="pending-details" id="incomplete-details">
+          Your onboarding is incomplete. Click below to continue where you left off.
         </p>
         <button class="btn-connect" id="btn-resume-connect" onclick="startConnect()">
-          Continue Stripe Setup →
+          Finish Setup →
         </button>
       </div>
 
       <!-- STATE: pending (submitted, awaiting Stripe verification) -->
       <div class="state" id="state-pending">
-        <div class="pending-badge">⏳ Awaiting Stripe verification</div>
+        <div class="pending-badge">⏳ Under Review</div>
         <p class="pending-details">
-          You've submitted your details. Stripe is reviewing your account —
-          this usually takes a few hours. You'll receive an email from Stripe
-          when your account is ready to accept payments.
+          Stripe is reviewing your account. This usually takes 1–2 business days.
+          You'll receive an email from Stripe when your account is ready to accept payments.
         </p>
-        <a href="https://connect.stripe.com/express_login" target="_blank" rel="noopener" class="btn-outline-sm">
-          View Stripe Express Dashboard ↗
-        </a>
       </div>
 
       <!-- STATE: active / connected -->
       <div class="state" id="state-active">
         <div class="connected-badge">✓ Connected &amp; Active</div>
+        <div class="connect-status-rows">
+          <div class="connect-status-row">
+            <span class="row-label">Card payments</span>
+            <span class="status-pill on">Enabled</span>
+          </div>
+          <div class="connect-status-row">
+            <span class="row-label">Bank payouts</span>
+            <span class="status-pill on">Enabled</span>
+          </div>
+        </div>
         <p class="connected-details">
           Your Stripe account is connected and ready to accept payments.
           When clients click <strong>Pay Now</strong> on your invoices,
@@ -289,7 +323,35 @@
             Create an Invoice →
           </a>
           <a href="https://connect.stripe.com/express_login" target="_blank" rel="noopener" class="btn-outline-sm">
-            Stripe Dashboard ↗
+            Open Stripe Dashboard →
+          </a>
+        </div>
+      </div>
+
+      <!-- STATE: payouts disabled (charges active but payouts blocked) -->
+      <div class="state" id="state-payouts-disabled">
+        <div class="warn-badge">⚠ Payouts Disabled</div>
+        <div class="connect-status-rows">
+          <div class="connect-status-row">
+            <span class="row-label">Card payments</span>
+            <span class="status-pill on">Enabled</span>
+          </div>
+          <div class="connect-status-row">
+            <span class="row-label">Bank payouts</span>
+            <span class="status-pill off">Disabled</span>
+          </div>
+        </div>
+        <p class="warn-details">
+          Your account can accept payments but payouts to your bank are currently
+          disabled. Stripe usually needs additional information to resolve this.
+          Click below to fix your account setup.
+        </p>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+          <button class="btn-connect" id="btn-fix-payouts" onclick="startConnect()" style="width:auto;">
+            Fix Payout Setup →
+          </button>
+          <a href="https://connect.stripe.com/express_login" target="_blank" rel="noopener" class="btn-outline-sm">
+            Open Stripe Dashboard →
           </a>
         </div>
       </div>
@@ -366,10 +428,11 @@
       return;
     }
 
-    // Handle expired link refresh — auto-restart onboarding
+    // Handle expired link — show message, let user click to get a new one
     if (isRefresh) {
-      toast('Generating a fresh onboarding link…');
-      await startConnect();
+      showStatus('incomplete', sub);
+      const msg = document.getElementById('incomplete-details');
+      if (msg) msg.textContent = 'Your setup link has expired. Click below to get a new one and continue setting up your account.';
       return;
     }
 
@@ -402,10 +465,17 @@
       return;
     }
 
-    const btn1 = document.getElementById('btn-start-connect');
-    const btn2 = document.getElementById('btn-resume-connect');
-    if (btn1) { btn1.disabled = true; btn1.textContent = 'Redirecting to Stripe…'; }
-    if (btn2) { btn2.disabled = true; btn2.textContent = 'Redirecting to Stripe…'; }
+    // Disable all action buttons while in-flight (duplicate click protection)
+    const btns = ['btn-start-connect', 'btn-resume-connect', 'btn-fix-payouts'];
+    const labels = {
+      'btn-start-connect':  'Connect Stripe Account →',
+      'btn-resume-connect': 'Finish Setup →',
+      'btn-fix-payouts':    'Fix Payout Setup →',
+    };
+    btns.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.disabled = true; el.textContent = 'Redirecting to Stripe…'; }
+    });
 
     try {
       const res = await fetch('/api/stripe-connect-onboard', {
@@ -420,8 +490,11 @@
       window.location.href = data.url;
     } catch (err) {
       toast('Error: ' + err.message);
-      if (btn1) { btn1.disabled = false; btn1.textContent = 'Connect Stripe Account →'; }
-      if (btn2) { btn2.disabled = false; btn2.textContent = 'Continue Stripe Setup →'; }
+      // Re-enable buttons on failure
+      btns.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.disabled = false; el.textContent = labels[id]; }
+      });
     }
   }
 
@@ -435,20 +508,28 @@
     const dot   = document.getElementById('header-dot');
     const label = document.getElementById('header-label');
 
-    if (status === 'active' || (data?.chargesEnabled && data?.payoutsEnabled)) {
-      dot.className   = 'status-dot green';
+    // Resolve effective status from data flags when available
+    const charges = data?.chargesEnabled ?? (status === 'active');
+    const payouts = data?.payoutsEnabled ?? (status === 'active');
+
+    if (charges && payouts) {
+      dot.className     = 'status-dot green';
       label.textContent = 'Connected — Ready to accept payments';
       document.getElementById('state-active').classList.add('active');
+    } else if (charges && !payouts) {
+      dot.className     = 'status-dot amber';
+      label.textContent = 'Payouts disabled — action needed';
+      document.getElementById('state-payouts-disabled').classList.add('active');
     } else if (status === 'pending') {
-      dot.className   = 'status-dot amber';
-      label.textContent = 'Awaiting Stripe verification';
+      dot.className     = 'status-dot amber';
+      label.textContent = 'Under review';
       document.getElementById('state-pending').classList.add('active');
     } else if (status === 'incomplete') {
-      dot.className   = 'status-dot amber';
+      dot.className     = 'status-dot amber';
       label.textContent = 'Setup incomplete';
       document.getElementById('state-incomplete').classList.add('active');
     } else {
-      dot.className   = 'status-dot muted';
+      dot.className     = 'status-dot muted';
       label.textContent = 'Not connected';
       document.getElementById('state-not-connected').classList.add('active');
     }

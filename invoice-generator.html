@@ -638,6 +638,27 @@
       text-decoration: none; display: inline-block;
     }
     .btn-upgrade-sm:hover { background: #b8942f; }
+
+    /* Pay Now — eligibility check sub-states */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pay-check-loading {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .82rem; color: var(--muted); font-family: var(--font-mono);
+      padding: .6rem 0;
+    }
+    .pay-mini-spinner {
+      width: 14px; height: 14px; flex-shrink: 0; border-radius: 50%;
+      border: 2px solid var(--border); border-top-color: var(--gold);
+      animation: spin .7s linear infinite;
+    }
+    .pay-connect-warn {
+      padding: .8rem 1rem; margin-bottom: .75rem;
+      background: #fef3cd; border: 1px solid #f0c040;
+      border-radius: var(--radius);
+      font-size: .82rem; color: var(--ink); line-height: 1.6;
+    }
+    .pay-connect-warn a { color: var(--ink); font-weight: 600; text-decoration: underline; }
+    .pay-connect-warn a:hover { color: var(--gold); }
   </style>
 </head>
 <body>
@@ -821,27 +842,48 @@
           </label>
 
           <div class="pay-options" id="pay-options" style="display:none">
-            <div class="pay-amount-display">
-              Invoice total: <strong id="pay-amount-preview">$0.00</strong>
-              — your client will be charged this amount
-            </div>
-            <button class="btn-generate" id="btn-generate" onclick="generatePaymentLink()">
-              ⚡ Generate Pay Now Link
-            </button>
-            <div class="pay-stale-warning" id="pay-stale-warning">
-              ⚠ Invoice total changed — regenerate the link to update the payment amount.
-            </div>
-            <div class="pay-link-box" id="pay-link-box" style="display:none">
-              <div class="pay-link-label">✓ Payment link ready — paste into your invoice email</div>
-              <div class="pay-link-row">
-                <input type="text" id="pay-link-input" readonly />
-                <button class="pay-link-copy" onclick="copyPayLink()">Copy</button>
+
+            <!-- Loading: checking connect eligibility -->
+            <div id="pay-eligibility-loading" style="display:none">
+              <div class="pay-check-loading">
+                <div class="pay-mini-spinner"></div>
+                <span>Checking your Stripe connection…</span>
               </div>
-              <p class="pay-link-note">
-                Paste this link in your email when sending the invoice.
-                The <strong>Pay Now</strong> button also appears on the invoice PDF.
-              </p>
             </div>
+
+            <!-- Connect required: Pro but Stripe not active -->
+            <div id="pay-connect-required" style="display:none">
+              <div class="pay-connect-warn">
+                Connect your Stripe account first to receive payments directly.
+                <br/><a href="connect-stripe.html">→ Go to Connect Settings</a>
+              </div>
+            </div>
+
+            <!-- Generate flow: shown only when Connect is active -->
+            <div id="pay-generate-flow" style="display:none">
+              <div class="pay-amount-display">
+                Invoice total: <strong id="pay-amount-preview">$0.00</strong>
+                — your client will be charged this amount
+              </div>
+              <button class="btn-generate" id="btn-generate" onclick="generatePaymentLink()">
+                ⚡ Generate Pay Now Link
+              </button>
+              <div class="pay-stale-warning" id="pay-stale-warning">
+                ⚠ Invoice total changed — regenerate the link to update the payment amount.
+              </div>
+              <div class="pay-link-box" id="pay-link-box" style="display:none">
+                <div class="pay-link-label">✓ Payment link ready — paste into your invoice email</div>
+                <div class="pay-link-row">
+                  <input type="text" id="pay-link-input" readonly />
+                  <button class="pay-link-copy" onclick="copyPayLink()">Copy</button>
+                </div>
+                <p class="pay-link-note">
+                  Paste this link in your email when sending the invoice.
+                  The <strong>Pay Now</strong> button also appears on the invoice PDF.
+                </p>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -1380,16 +1422,48 @@
     }
   }
 
-  function onPayNowToggle() {
+  async function onPayNowToggle() {
     const enabled = document.getElementById('pay-now-toggle').checked;
     document.getElementById('pay-options').style.display = enabled ? '' : 'none';
+
     if (!enabled) {
       currentPaymentUrl = null;
       paymentLinkAmount = null;
       document.getElementById('pay-link-box').style.display = 'none';
       document.getElementById('pay-stale-warning').style.display = 'none';
+      showPaySubState('none');
+      return;
     }
-    updatePayAmountPreview();
+
+    // Show loading while we verify Connect eligibility — never flash wrong state
+    showPaySubState('loading');
+    const eligible = await checkConnectEligibility();
+    showPaySubState(eligible ? 'ready' : 'connect-required');
+    if (eligible) updatePayAmountPreview();
+  }
+
+  function showPaySubState(state) {
+    const loading  = document.getElementById('pay-eligibility-loading');
+    const warn     = document.getElementById('pay-connect-required');
+    const flow     = document.getElementById('pay-generate-flow');
+    if (loading) loading.style.display = (state === 'loading')          ? '' : 'none';
+    if (warn)    warn.style.display    = (state === 'connect-required') ? '' : 'none';
+    if (flow)    flow.style.display    = (state === 'ready')            ? '' : 'none';
+  }
+
+  async function checkConnectEligibility() {
+    try {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) return false;
+      const { data } = await sb
+        .from('subscriptions')
+        .select('stripe_connect_charges_enabled')
+        .eq('email', user.email)
+        .single();
+      return data?.stripe_connect_charges_enabled === true;
+    } catch (e) {
+      return false;
+    }
   }
 
   async function generatePaymentLink() {

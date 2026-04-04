@@ -50,6 +50,13 @@ module.exports = async function handler(req, res) {
   const connectId      = sub?.stripe_connect_id || null;
   const chargesEnabled = sub?.stripe_connect_charges_enabled || false;
 
+  console.log('Pay Now request:', {
+    userEmail:      userEmail,
+    hasConnectId:   !!connectId,
+    chargesEnabled: chargesEnabled,
+    routingTo:      (connectId && chargesEnabled) ? 'connected_account' : 'platform_account',
+  });
+
   // ── PARSE BODY ──
   let body;
   try {
@@ -108,14 +115,16 @@ module.exports = async function handler(req, res) {
             user_email:     userEmail,
           },
         };
-        // Route payment to user's connected Stripe account if fully onboarded
         if (connectId && chargesEnabled) {
           pid.transfer_data = { destination: connectId };
-          // Optional platform fee (set to 0 for now — adjust when monetising)
-          // pid.application_fee_amount = Math.round(unitAmount * 0.01);
-          console.log(`Routing to connected account: ${connectId}`);
+          // PLATFORM FEE — disabled for launch
+          // Uncomment to enable (set % before using):
+          // application_fee_amount: Math.round(unitAmount * 0.01)
         } else {
-          console.log('No active connect account — payment routes to platform');
+          // FALLBACK: Routes to DraftPaid platform account
+          // only as a safety net.
+          // Production UI blocks Pay Now unless Connect active.
+          // This should never be reached in normal UX.
         }
         return pid;
       })(),
