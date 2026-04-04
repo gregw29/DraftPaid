@@ -926,7 +926,7 @@
     const tbody = document.getElementById("items-body");
     tbody.innerHTML = items.map((item, i) => `
       <tr>
-        <td><input type="text"   value="${item.desc}"  placeholder="Service or product…"
+        <td><input type="text"   value="${escapeHtml(item.desc)}"  placeholder="Service or product…"
               oninput="items[${i}].desc=$this(this);recalc()" /></td>
         <td><input type="number" value="${item.qty}"   min="0" step=".5" style="width:80px"
               oninput="items[${i}].qty=+this.value;recalc()" /></td>
@@ -991,7 +991,7 @@
   }
 
   function buildPreview() {
-    const cur      = document.getElementById("inv-currency").value;
+    const cur      = escapeHtml(document.getElementById("inv-currency")?.value || "$");
     const taxRate  = parseFloat(document.getElementById("tax-rate").value) || 0;
     const discount = parseFloat(document.getElementById("discount").value) || 0;
 
@@ -1000,7 +1000,7 @@
       const amt = (item.qty || 0) * (item.price || 0);
       subtotal += amt;
       return `<tr>
-        <td>${item.desc || "—"}</td>
+        <td>${escapeHtml(item.desc) || "—"}</td>
         <td>${item.qty}</td>
         <td>${cur}${(item.price||0).toFixed(2)}</td>
         <td>${cur}${amt.toFixed(2)}</td>
@@ -1010,18 +1010,18 @@
     const tax   = subtotal * (taxRate / 100);
     const total = Math.max(0, subtotal + tax - discount);
 
-    const fromName    = v("from-name")    || "Your Business";
-    const fromEmail   = v("from-email")   || "";
-    const fromPhone   = v("from-phone")   || "";
-    const fromAddress = v("from-address") || "";
-    const toName      = v("to-name")      || "Client Name";
-    const toEmail     = v("to-email")     || "";
-    const toPhone     = v("to-phone")     || "";
-    const toAddress   = v("to-address")   || "";
-    const invNum      = v("inv-number")   || "INV-001";
-    const invDate     = v("inv-date")     || "";
-    const invDue      = v("inv-due")      || "";
-    const notes       = v("inv-notes")    || "";
+    const fromName    = escapeHtml(v("from-name"))    || "Your Business";
+    const fromEmail   = escapeHtml(v("from-email"))   || "";
+    const fromPhone   = escapeHtml(v("from-phone"))   || "";
+    const fromAddress = escapeHtml(v("from-address")) || "";
+    const toName      = escapeHtml(v("to-name"))      || "Client Name";
+    const toEmail     = escapeHtml(v("to-email"))     || "";
+    const toPhone     = escapeHtml(v("to-phone"))     || "";
+    const toAddress   = escapeHtml(v("to-address"))   || "";
+    const invNum      = escapeHtml(v("inv-number"))   || "INV-001";
+    const invDate     = escapeHtml(v("inv-date"))     || "";
+    const invDue      = escapeHtml(v("inv-due"))      || "";
+    const notes       = escapeHtml(v("inv-notes"))    || "";
 
     const logoDataUrl = localStorage.getItem('draftpaid_logo') || '';
 
@@ -1224,6 +1224,11 @@
 
   /* ── HELPERS ── */
   function v(id) { return document.getElementById(id)?.value?.trim() || ""; }
+
+  function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return String(text).replace(/[&<>"']/g, char => map[char]);
+  }
 
   function toast(msg) {
     const t = document.getElementById("toast");
