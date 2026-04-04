@@ -659,6 +659,119 @@
     }
     .pay-connect-warn a { color: var(--ink); font-weight: 600; text-decoration: underline; }
     .pay-connect-warn a:hover { color: var(--gold); }
+
+    /* ── MY CLIENTS NAV LINK ── */
+    .btn-clients-link {
+      font-family: var(--font-mono);
+      font-size: .72rem; letter-spacing: .07em; text-transform: uppercase;
+      color: rgba(247,244,239,.55); text-decoration: none;
+      padding: .25rem .6rem; border-radius: 3px;
+      border: 1px solid rgba(247,244,239,.15);
+      transition: all .15s; white-space: nowrap;
+    }
+    .btn-clients-link:hover { color: var(--gold-lt); border-color: var(--gold); }
+
+    /* ── CLIENT ACTION BAR (Bill To card) ── */
+    .client-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: .5rem;
+      padding: .6rem .85rem;
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+    }
+    .client-bar-note {
+      font-size: .75rem; color: var(--muted); font-family: var(--font-mono); letter-spacing: .03em;
+    }
+    .client-bar-actions { display: flex; gap: .4rem; }
+    .btn-use-client, .btn-save-client {
+      font-family: var(--font-mono);
+      font-size: .68rem; letter-spacing: .06em; text-transform: uppercase;
+      padding: .3rem .75rem; border-radius: 3px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); cursor: pointer; transition: all .15s;
+      white-space: nowrap;
+    }
+    .btn-use-client:hover  { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .btn-save-client:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── CLIENT UPGRADE TEASER ── */
+    .client-upgrade-teaser {
+      padding: .55rem .85rem;
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+      font-size: .75rem; color: var(--muted);
+      display: flex; align-items: center; gap: .35rem;
+    }
+    .client-upgrade-teaser a { color: var(--gold); text-decoration: none; font-weight: 600; }
+    .client-upgrade-teaser a:hover { text-decoration: underline; }
+
+    /* ── CLIENT PICKER MODAL ── */
+    .client-picker-overlay {
+      position: fixed; inset: 0; z-index: 250;
+      background: rgba(15,14,12,.65);
+      backdrop-filter: blur(3px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    .client-picker-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow-lg); width: 100%; max-width: 480px;
+      max-height: 80vh; display: flex; flex-direction: column; overflow: hidden;
+    }
+    .client-picker-header {
+      background: var(--cream); border-bottom: 1px solid var(--border);
+      padding: .9rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .client-picker-header-title {
+      font-family: var(--font-mono); font-size: .72rem; font-weight: 500;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+    }
+    .client-picker-search {
+      padding: .65rem 1rem; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .client-picker-search input { width: 100%; font-size: .88rem; }
+    .client-picker-list { flex: 1; overflow-y: auto; padding: .4rem 0; min-height: 100px; }
+    .cp-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .7rem 1.25rem; cursor: pointer; transition: background .1s;
+    }
+    .cp-row:hover { background: var(--paper); }
+    .cp-row + .cp-row { border-top: 1px solid var(--cream); }
+    .cp-row-info { flex: 1; min-width: 0; }
+    .cp-row-name {
+      font-size: .9rem; font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .cp-row-meta {
+      font-size: .75rem; color: var(--muted); margin-top: .1rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .btn-cp-use {
+      background: var(--ink); color: var(--paper); border: none;
+      border-radius: var(--radius); font-size: .72rem; font-family: var(--font-mono);
+      padding: .3rem .7rem; cursor: pointer; flex-shrink: 0;
+      margin-left: .75rem; transition: background .15s; white-space: nowrap;
+    }
+    .btn-cp-use:hover { background: var(--gold); color: var(--ink); }
+    .cp-loading, .cp-empty {
+      padding: 2rem 1.25rem; text-align: center;
+      font-size: .85rem; color: var(--muted); line-height: 1.65;
+    }
+    .client-picker-footer {
+      border-top: 1px solid var(--border); padding: .65rem 1.25rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-shrink: 0;
+    }
+    .cp-manage-link {
+      font-size: .75rem; color: var(--muted); text-decoration: none;
+      font-family: var(--font-mono); letter-spacing: .04em; transition: color .15s;
+    }
+    .cp-manage-link:hover { color: var(--gold); }
+    .cp-count {
+      font-size: .72rem; color: var(--muted); font-family: var(--font-mono);
+    }
   </style>
 </head>
 <body>
@@ -668,6 +781,7 @@
   <span class="invoice-counter" id="invoice-counter"></span>
   <div class="header-actions">
     <div class="account-menu" id="account-menu"></div>
+    <a href="clients.html" class="btn-clients-link" id="clients-nav-link" style="display:none">My Clients</a>
     <button class="btn btn-outline" onclick="openPreviewModal()">👁 Preview Invoice</button>
     <button class="btn btn-primary" onclick="downloadPDF()">⬇ Download PDF</button>
   </div>
@@ -728,6 +842,19 @@
 
       <div class="card">
         <div class="card-header"><div class="card-dot"></div><h2>Bill To (Client)</h2></div>
+        <!-- Pro: use/save client actions -->
+        <div class="client-bar" id="client-bar" style="display:none">
+          <span class="client-bar-note">Saved clients</span>
+          <div class="client-bar-actions">
+            <button class="btn-use-client" onclick="openClientPicker()">Use Saved Client</button>
+            <button class="btn-save-client" onclick="saveCurrentClient()">Save Client</button>
+          </div>
+        </div>
+        <!-- Free: upgrade teaser -->
+        <div class="client-upgrade-teaser" id="client-upgrade-teaser" style="display:none">
+          <span>💡 Save clients for faster invoicing —</span>
+          <a href="https://buy.stripe.com/8x2cN5gB5ekDet1bHFgnK00">Upgrade to Pro</a>
+        </div>
         <div class="card-body">
           <div class="form-grid">
             <div class="field"><label>Client Name / Company</label><input type="text" id="to-name" placeholder="Client Corp" /></div>
@@ -911,6 +1038,26 @@
   </div>
 </div>
 
+<!-- ── CLIENT PICKER MODAL ── -->
+<div class="client-picker-overlay" id="client-picker-overlay" style="display:none" onclick="if(event.target===this)closeClientPicker()">
+  <div class="client-picker-card">
+    <div class="client-picker-header">
+      <span class="client-picker-header-title">Saved Clients</span>
+      <button class="modal-close-btn" onclick="closeClientPicker()">✕</button>
+    </div>
+    <div class="client-picker-search">
+      <input type="text" id="cp-search" placeholder="Search by name or email…" oninput="filterPickerClients(this.value)" />
+    </div>
+    <div class="client-picker-list" id="cp-list">
+      <div class="cp-loading">Loading…</div>
+    </div>
+    <div class="client-picker-footer">
+      <span class="cp-count" id="cp-count"></span>
+      <a href="clients.html" class="cp-manage-link">Manage Clients →</a>
+    </div>
+  </div>
+</div>
+
 <!-- ── UPGRADE MODAL ── -->
 <div class="upgrade-modal-overlay hidden" id="upgrade-modal-overlay">
   <div class="upgrade-modal-card">
@@ -934,6 +1081,8 @@
   ];
   let currentPaymentUrl  = null;  // set after generating a pay link
   let paymentLinkAmount  = null;  // amount used when link was last generated
+  let currentUser        = null;  // set in checkProStatus
+  let pickerClients      = [];    // cached active clients for picker
 
   /* ── LOAD TEMPLATE FROM sessionStorage (profession templates) ── */
   function loadTemplateFromStorage() {
@@ -1035,6 +1184,9 @@
   window.addEventListener("DOMContentLoaded", async () => {
     // Load profession template if coming from templates page
     loadTemplateFromStorage();
+
+    // Apply client passed from clients.html "Use" action
+    applyClientFromStorage();
 
     // Set default dates
     const today = new Date();
@@ -1279,6 +1431,7 @@
     try {
       const { data: { user } } = await sb.auth.getUser();
       if (user) {
+        currentUser = user;
         const { data } = await sb
           .from('subscriptions')
           .select('status')
@@ -1319,6 +1472,13 @@
     const proSection     = document.getElementById('pay-pro-section');
     if (upgradeSection) upgradeSection.style.display = isPro ? 'none' : '';
     if (proSection)     proSection.style.display     = isPro ? '' : 'none';
+    // Client DB elements
+    const clientBar      = document.getElementById('client-bar');
+    const clientTeaser   = document.getElementById('client-upgrade-teaser');
+    const clientsNavLink = document.getElementById('clients-nav-link');
+    if (clientBar)      clientBar.style.display      = isPro ? '' : 'none';
+    if (clientTeaser)   clientTeaser.style.display   = isPro ? 'none' : '';
+    if (clientsNavLink) clientsNavLink.style.display = isPro ? '' : 'none';
   }
 
   function updateAccountMenu(email) {
@@ -1547,6 +1707,143 @@
         document.execCommand('copy');
         toast('✓ Copied!');
       });
+  }
+
+  /* ── CLIENT DATABASE ── */
+
+  async function openClientPicker() {
+    if (!currentUser) { toast('Please sign in to use saved clients.'); return; }
+    document.getElementById('client-picker-overlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('cp-search').value = '';
+    await loadPickerClients();
+  }
+
+  function closeClientPicker() {
+    document.getElementById('client-picker-overlay').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  async function loadPickerClients() {
+    const list = document.getElementById('cp-list');
+    list.innerHTML = '<div class="cp-loading">Loading…</div>';
+
+    const { data, error } = await sb
+      .from('clients')
+      .select('id, client_business_name, contact_name, email, phone, address_line_1, address_line_2, city, state, postal_code, notes')
+      .eq('user_id', currentUser.id)
+      .eq('is_archived', false)
+      .order('client_business_name', { ascending: true, nullsFirst: false });
+
+    if (error) {
+      list.innerHTML = '<div class="cp-empty">Error loading clients.</div>';
+      return;
+    }
+
+    pickerClients = data || [];
+    renderPickerList(pickerClients);
+  }
+
+  function filterPickerClients(search) {
+    const q = (search || '').toLowerCase();
+    if (!q) { renderPickerList(pickerClients); return; }
+    const filtered = pickerClients.filter(c =>
+      (c.client_business_name || '').toLowerCase().includes(q) ||
+      (c.contact_name         || '').toLowerCase().includes(q) ||
+      (c.email                || '').toLowerCase().includes(q)
+    );
+    renderPickerList(filtered);
+  }
+
+  function renderPickerList(clients) {
+    const list  = document.getElementById('cp-list');
+    const count = document.getElementById('cp-count');
+    if (count) count.textContent = clients.length === 1 ? '1 client' : `${clients.length} clients`;
+
+    if (clients.length === 0) {
+      list.innerHTML = pickerClients.length === 0
+        ? '<div class="cp-empty">No saved clients yet.<br>Fill in the Bill To fields and click <strong>Save Client</strong> to get started.</div>'
+        : '<div class="cp-empty">No clients match your search.</div>';
+      return;
+    }
+
+    list.innerHTML = clients.map((c, i) => {
+      const name = escapeHtml(c.client_business_name || c.contact_name || 'Unnamed Client');
+      const meta = [c.email, c.contact_name].filter(Boolean).map(escapeHtml).join(' · ');
+      return `
+        <div class="cp-row" data-idx="${i}">
+          <div class="cp-row-info">
+            <div class="cp-row-name">${name}</div>
+            ${meta ? `<div class="cp-row-meta">${meta}</div>` : ''}
+          </div>
+          <button class="btn-cp-use">Use →</button>
+        </div>`;
+    }).join('');
+
+    // Attach event listeners (avoids inline JSON / XSS risk)
+    list.querySelectorAll('.cp-row').forEach((el, i) => {
+      el.addEventListener('click', () => useClient(clients[i]));
+    });
+  }
+
+  function useClient(client) {
+    document.getElementById('to-name').value  = client.client_business_name || client.contact_name || '';
+    document.getElementById('to-email').value = client.email || '';
+    document.getElementById('to-phone').value = client.phone || '';
+
+    // Build formatted address string for the textarea
+    const parts = [];
+    if (client.address_line_1) parts.push(client.address_line_1);
+    if (client.address_line_2) parts.push(client.address_line_2);
+    const cityLine = [client.city, client.state, client.postal_code].filter(Boolean).join(', ');
+    if (cityLine) parts.push(cityLine);
+    document.getElementById('to-address').value = parts.join('\n');
+
+    recalc();
+    saveUserData();
+    closeClientPicker();
+    toast('✓ Client applied!');
+  }
+
+  async function saveCurrentClient() {
+    if (!currentUser) { toast('Please sign in to save clients.'); return; }
+
+    const name  = document.getElementById('to-name').value.trim();
+    const email = document.getElementById('to-email').value.trim();
+    if (!name && !email) {
+      toast('Add a client name or email first.');
+      return;
+    }
+
+    const address = document.getElementById('to-address').value.trim();
+    // NOTE: Duplicates are allowed in this MVP — no dedupe logic yet.
+    const { error } = await sb.from('clients').insert({
+      user_id:              currentUser.id,
+      client_business_name: name    || null,
+      email:                email   || null,
+      phone:                document.getElementById('to-phone').value.trim() || null,
+      address_line_1:       address || null,
+    });
+
+    if (error) {
+      toast('Error saving client.');
+      console.error('saveCurrentClient:', error);
+      return;
+    }
+
+    toast('✓ Client saved!');
+  }
+
+  // Apply a client passed via sessionStorage from clients.html "Use →" action
+  function applyClientFromStorage() {
+    try {
+      const stored = sessionStorage.getItem('draftpaid_apply_client');
+      if (!stored) return;
+      sessionStorage.removeItem('draftpaid_apply_client');
+      useClient(JSON.parse(stored));
+    } catch(e) {
+      // Ignore parse errors
+    }
   }
 </script>
 </body>
