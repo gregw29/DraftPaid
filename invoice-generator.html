@@ -1467,6 +1467,14 @@
   }
 
   async function generatePaymentLink() {
+    // Defensive guard: re-check eligibility on every invocation.
+    // Protects against stale DOM, race conditions, and direct console calls.
+    const stillEligible = await checkConnectEligibility();
+    if (!stillEligible) {
+      showPaySubState('connect-required');
+      return;
+    }
+
     const cur   = document.getElementById('inv-currency')?.value || '$';
     const total = parseFloat(
       document.getElementById('total-display')?.textContent?.replace(/[^0-9.]/g, '')

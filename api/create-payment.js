@@ -125,6 +125,7 @@ module.exports = async function handler(req, res) {
           // only as a safety net.
           // Production UI blocks Pay Now unless Connect active.
           // This should never be reached in normal UX.
+          console.warn('WARNING: Routing to platform account — Connect not active for:', userEmail);
         }
         return pid;
       })(),
