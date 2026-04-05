@@ -1820,22 +1820,38 @@
     }
 
     const address = document.getElementById('to-address').value.trim();
-    // NOTE: Duplicates are allowed in this MVP — no dedupe logic yet.
-    const { error } = await sb.from('clients').insert({
+    const phone   = document.getElementById('to-phone').value.trim();
+
+    // contact_name is NOT NULL in the table — always populate it
+    const insertData = {
       user_id:              user.id,
+      contact_name:         name    || null,   // NOT NULL column — required
       client_business_name: name    || null,
       email:                email   || null,
-      phone:                document.getElementById('to-phone').value.trim() || null,
+      phone:                phone   || null,
       address_line_1:       address || null,
-    });
+    };
 
-    if (error) {
+    console.log('Saving client:', insertData);
+
+    try {
+      const { error } = await sb.from('clients').insert(insertData);
+
+      if (error) {
+        toast('Error saving client.');
+        console.error('Save client full error:', error);
+        console.error('Error message:', error.message);
+        console.error('Error details:', JSON.stringify(error));
+        return;
+      }
+
+      toast('✓ Client saved!');
+    } catch (err) {
       toast('Error saving client.');
-      console.error('saveCurrentClient:', error);
-      return;
+      console.error('Save client full error:', err);
+      console.error('Error message:', err.message);
+      console.error('Error details:', JSON.stringify(err));
     }
-
-    toast('✓ Client saved!');
   }
 
   // Apply a client passed via sessionStorage from clients.html "Use →" action
