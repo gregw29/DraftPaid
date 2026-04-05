@@ -660,7 +660,16 @@
     .pay-connect-warn a { color: var(--ink); font-weight: 600; text-decoration: underline; }
     .pay-connect-warn a:hover { color: var(--gold); }
 
-    /* ── MY CLIENTS NAV LINK ── */
+    /* ── MY INVOICES / MY CLIENTS NAV LINKS ── */
+    .btn-invoices-link {
+      font-family: var(--font-mono);
+      font-size: .72rem; letter-spacing: .07em; text-transform: uppercase;
+      color: rgba(247,244,239,.55); text-decoration: none;
+      padding: .25rem .6rem; border-radius: 3px;
+      border: 1px solid rgba(247,244,239,.15);
+      transition: all .15s; white-space: nowrap;
+    }
+    .btn-invoices-link:hover { color: var(--gold-lt); border-color: var(--gold); }
     .btn-clients-link {
       font-family: var(--font-mono);
       font-size: .72rem; letter-spacing: .07em; text-transform: uppercase;
@@ -781,6 +790,7 @@
   <span class="invoice-counter" id="invoice-counter"></span>
   <div class="header-actions">
     <div class="account-menu" id="account-menu"></div>
+    <a href="invoices.html" class="btn-invoices-link" id="invoices-nav-link" style="display:none">My Invoices</a>
     <a href="clients.html" class="btn-clients-link" id="clients-nav-link" style="display:none">My Clients</a>
     <button class="btn btn-outline" onclick="openPreviewModal()">👁 Preview Invoice</button>
     <button class="btn btn-primary" onclick="downloadPDF()">⬇ Download PDF</button>
@@ -1083,6 +1093,9 @@
   let paymentLinkAmount  = null;  // amount used when link was last generated
   let currentUser        = null;  // set in checkProStatus
   let pickerClients      = [];    // cached active clients for picker
+  let _saveDebounceKey   = null;  // invoice number of last save
+  let _saveDebounceTime  = 0;     // timestamp of last save
+  let _pendingPayNowUrl  = null;  // pay link URL loaded from history, restored in applyProUI
 
   /* ── LOAD TEMPLATE FROM sessionStorage (profession templates) ── */
   function loadTemplateFromStorage() {
@@ -1187,6 +1200,10 @@
 
     // Apply client passed from clients.html "Use" action
     applyClientFromStorage();
+
+    // Load invoice from history page "Open in Generator" action (runs after defaults below)
+    // Deferred with setTimeout so default dates are set first, then invoice data overwrites them
+    setTimeout(loadInvoiceFromStorage, 0);
 
     // Set default dates
     const today = new Date();
@@ -1293,6 +1310,7 @@
     buildPreview();
     document.getElementById("preview-modal-overlay").classList.remove("hidden");
     document.body.style.overflow = "hidden";
+    saveInvoiceToHistory({ silent: true }); // background save — no toast (preview fires often)
   }
 
   function closePreviewModal() {
@@ -1479,6 +1497,25 @@
     if (clientBar)      clientBar.style.display      = isPro ? '' : 'none';
     if (clientTeaser)   clientTeaser.style.display   = isPro ? 'none' : '';
     if (clientsNavLink) clientsNavLink.style.display = isPro ? '' : 'none';
+    // Invoice history nav link
+    const invoicesNavLink = document.getElementById('invoices-nav-link');
+    if (invoicesNavLink) invoicesNavLink.style.display = isPro ? '' : 'none';
+    // Restore pending Pay Now state if an invoice was loaded from history
+    if (isPro && _pendingPayNowUrl) {
+      const url = _pendingPayNowUrl;
+      _pendingPayNowUrl = null;
+      const toggle = document.getElementById('pay-now-toggle');
+      const proSec = document.getElementById('pay-pro-section');
+      if (toggle && proSec) {
+        proSec.style.display = '';
+        toggle.checked = true;
+        document.getElementById('pay-options').style.display = '';
+        document.getElementById('pay-link-input').value = url;
+        document.getElementById('pay-link-box').style.display = '';
+        showPaySubState('ready');
+        updatePayAmountPreview();
+      }
+    }
   }
 
   function updateAccountMenu(email) {
@@ -1536,6 +1573,7 @@
       }
       pdf.save("DraftPaid-Invoice.pdf");
       incrementInvoiceCount();
+      saveInvoiceToHistory({ silent: true }); // background save — no toast (download has its own)
       closePreviewModal();
       toast("✓ Invoice downloaded!");
     } catch(e) {
@@ -1686,6 +1724,8 @@
       document.getElementById('pay-link-input').value = data.url;
       document.getElementById('pay-link-box').style.display = '';
       document.getElementById('pay-stale-warning').style.display = 'none';
+      // Save invoice with payment URL — force save even if recently saved
+      saveInvoiceToHistory({ paymentUrl: data.url, stripeSessionId: data.sessionId, force: true });
       toast('✓ Payment link created!');
 
     } catch(err) {
@@ -1707,6 +1747,121 @@
         document.execCommand('copy');
         toast('✓ Copied!');
       });
+  }
+
+  /* ── INVOICE HISTORY ── */
+
+  async function saveInvoiceToHistory(options = {}) {
+    // Pro-only: skip silently for free users
+    if (localStorage.getItem('draftpaid_pro') !== 'true') return;
+
+    const invoiceNum = v('inv-number');
+    if (!invoiceNum) return;
+
+    // Debounce: skip if same invoice was saved within 2 s — unless forced (payment link)
+    const now = Date.now();
+    if (!options.force && _saveDebounceKey === invoiceNum && now - _saveDebounceTime < 2000) return;
+    _saveDebounceKey  = invoiceNum;
+    _saveDebounceTime = now;
+
+    try {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) return;
+
+      const cur      = document.getElementById('inv-currency')?.value || '$';
+      const taxRate  = parseFloat(document.getElementById('tax-rate')?.value)  || 0;
+      const discount = parseFloat(document.getElementById('discount')?.value)  || 0;
+      let subtotal = 0;
+      items.forEach(item => { subtotal += (item.qty || 0) * (item.price || 0); });
+      const taxAmount = subtotal * (taxRate / 100);
+      const total     = Math.max(0, subtotal + taxAmount - discount);
+
+      const payNowEnabled = document.getElementById('pay-now-toggle')?.checked || false;
+      const paymentUrl    = options.paymentUrl    || currentPaymentUrl || null;
+      const stripeSession = options.stripeSessionId || null;
+      const status        = (payNowEnabled || paymentUrl) ? 'unpaid' : 'draft';
+
+      const payload = {
+        user_id:           user.id,
+        user_email:        user.email,
+        invoice_number:    invoiceNum,
+        invoice_date:      v('inv-date')  || null,
+        due_date:          v('inv-due')   || null,
+        client_name:       v('to-name')   || null,
+        client_email:      v('to-email')  || null,
+        line_items:        JSON.parse(JSON.stringify(items)), // deep copy
+        subtotal:          parseFloat(subtotal.toFixed(2)),
+        tax_rate:          parseFloat(taxRate.toFixed(2)),
+        tax_amount:        parseFloat(taxAmount.toFixed(2)),
+        discount:          parseFloat(discount.toFixed(2)),
+        total:             parseFloat(total.toFixed(2)),
+        currency:          cur,
+        notes:             v('inv-notes') || null,
+        status,
+        pay_now_enabled:   payNowEnabled,
+        payment_url:       paymentUrl,
+        stripe_session_id: stripeSession,
+      };
+
+      const { error } = await sb.from('invoices').upsert(payload, {
+        onConflict: 'user_id,invoice_number',
+        ignoreDuplicates: false,
+      });
+
+      if (!error && !options.silent) toast('Invoice saved');
+    } catch(e) {
+      // Fail silently — never block the invoice flow
+    }
+  }
+
+  function loadInvoiceFromStorage() {
+    try {
+      const stored = sessionStorage.getItem('draftpaid_load_invoice');
+      if (!stored) return;
+      sessionStorage.removeItem('draftpaid_load_invoice');
+      const inv = JSON.parse(stored);
+
+      // Invoice meta
+      if (inv.invoice_number) document.getElementById('inv-number').value = inv.invoice_number;
+      if (inv.invoice_date)   document.getElementById('inv-date').value   = inv.invoice_date;
+      if (inv.due_date)       document.getElementById('inv-due').value    = inv.due_date;
+
+      // Client fields
+      if (inv.client_name  != null) document.getElementById('to-name').value  = inv.client_name  || '';
+      if (inv.client_email != null) document.getElementById('to-email').value = inv.client_email || '';
+
+      // Notes + currency
+      if (inv.notes    != null) document.getElementById('inv-notes').value    = inv.notes    || '';
+      if (inv.currency)         document.getElementById('inv-currency').value = inv.currency;
+
+      // Tax + discount
+      if (inv.tax_rate  != null) document.getElementById('tax-rate').value = inv.tax_rate;
+      if (inv.discount  != null) document.getElementById('discount').value  = inv.discount;
+
+      // Line items
+      if (Array.isArray(inv.line_items) && inv.line_items.length > 0) {
+        items = inv.line_items.map(li => ({
+          desc:  String(li.desc  || ''),
+          qty:   parseFloat(li.qty)   || 1,
+          price: parseFloat(li.price) || 0,
+        }));
+        renderItems();
+      }
+
+      recalc();
+      saveUserData();
+
+      // If invoice had a payment URL, defer restore until Pro is confirmed in applyProUI
+      if (inv.payment_url) {
+        currentPaymentUrl = inv.payment_url;
+        paymentLinkAmount = parseFloat(inv.total) || null;
+        _pendingPayNowUrl = inv.payment_url; // applyProUI picks this up
+      }
+
+      toast('Invoice loaded.');
+    } catch(e) {
+      console.error('loadInvoiceFromStorage:', e);
+    }
   }
 
   /* ── CLIENT DATABASE ── */

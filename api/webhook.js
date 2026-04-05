@@ -51,6 +51,7 @@ module.exports = async function handler(req, res) {
 
         // ── Invoice payment (Pay Now feature) ──
         if (session.metadata?.type === 'invoice_payment') {
+          // Update invoice_payments table
           await supabase
             .from('invoice_payments')
             .update({
@@ -59,6 +60,28 @@ module.exports = async function handler(req, res) {
               stripe_payment_intent_id:  session.payment_intent || null,
             })
             .eq('stripe_session_id', session.id);
+
+          // Update invoices table — prefer stripe_session_id match, fallback to number+email
+          const sessionId   = session.id;
+          const invoiceNum  = session.metadata?.invoice_number || null;
+          const userEmail   = session.metadata?.user_email     || null;
+
+          const { data: bySession } = await supabase
+            .from('invoices')
+            .update({ status: 'paid', paid_at: now })
+            .eq('stripe_session_id', sessionId)
+            .select('id');
+
+          if ((!bySession || bySession.length === 0) && invoiceNum && userEmail) {
+            // Fallback: match by invoice_number + user_email
+            await supabase
+              .from('invoices')
+              .update({ status: 'paid', paid_at: now })
+              .eq('invoice_number', invoiceNum)
+              .eq('user_email', userEmail);
+            console.log(`invoices: fallback paid update for ${invoiceNum} / ${userEmail}`);
+          }
+
           console.log(`Invoice payment completed: session ${session.id}`);
           break;
         }
