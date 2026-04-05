@@ -1728,10 +1728,13 @@
     const list = document.getElementById('cp-list');
     list.innerHTML = '<div class="cp-loading">Loading…</div>';
 
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { list.innerHTML = '<div class="cp-empty">Please sign in to view clients.</div>'; return; }
+
     const { data, error } = await sb
       .from('clients')
       .select('id, client_business_name, contact_name, email, phone, address_line_1, address_line_2, city, state, postal_code, notes')
-      .eq('user_id', currentUser.id)
+      .eq('user_id', user.id)
       .eq('is_archived', false)
       .order('client_business_name', { ascending: true, nullsFirst: false });
 
@@ -1806,7 +1809,8 @@
   }
 
   async function saveCurrentClient() {
-    if (!currentUser) { toast('Please sign in to save clients.'); return; }
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { toast('Please sign in to save clients.'); return; }
 
     const name  = document.getElementById('to-name').value.trim();
     const email = document.getElementById('to-email').value.trim();
@@ -1818,7 +1822,7 @@
     const address = document.getElementById('to-address').value.trim();
     // NOTE: Duplicates are allowed in this MVP — no dedupe logic yet.
     const { error } = await sb.from('clients').insert({
-      user_id:              currentUser.id,
+      user_id:              user.id,
       client_business_name: name    || null,
       email:                email   || null,
       phone:                document.getElementById('to-phone').value.trim() || null,
