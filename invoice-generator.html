@@ -1803,12 +1803,25 @@
         stripe_session_id: stripeSession,
       };
 
-      const { error } = await sb.from('invoices').upsert(payload, {
-        onConflict: 'user_id,invoice_number',
-        ignoreDuplicates: false,
-      });
+      // INSERT new row with is_deleted=false; on conflict (user_id, invoice_number)
+      // UPDATE all fields but leave is_deleted untouched.
+      const { error: insertErr } = await sb
+        .from('invoices')
+        .insert({ ...payload, is_deleted: false });
 
-      if (!error && !options.silent) toast('Invoice saved');
+      if (insertErr && insertErr.code === '23505') {
+        // Row already exists — update everything except is_deleted
+        const { error: updateErr } = await sb
+          .from('invoices')
+          .update(payload)
+          .eq('user_id', user.id)
+          .eq('invoice_number', invoiceNum);
+        if (updateErr && !options.silent) console.error('invoice update error:', updateErr);
+      } else if (insertErr && !options.silent) {
+        console.error('invoice insert error:', insertErr);
+      }
+
+      if (!options.silent) toast('Invoice saved');
     } catch(e) {
       // Fail silently — never block the invoice flow
     }
