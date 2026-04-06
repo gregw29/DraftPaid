@@ -12,6 +12,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DraftPaid — Professional Invoice Generator</title>
+  <link rel="canonical" href="https://draftpaid.com/invoice-generator.html"/>
+  <meta property="og:title" content="DraftPaid — Free Professional Invoice Generator">
+  <meta property="og:description" content="Create a professional invoice in 30 seconds. No signup required. Free forever.">
+  <meta property="og:url" content="https://draftpaid.com">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://draftpaid.com/preview.png">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1523,7 +1529,7 @@
     if (!menu) return;
     if (email) {
       menu.innerHTML =
-        `<span class="account-email">${email}</span>` +
+        `<span class="account-email">${escapeHtml(email)}</span>` +
         `<button class="btn-signout" onclick="signOut()">Sign Out</button>`;
     } else {
       menu.innerHTML = `<a href="auth.html" class="btn-signin-link">Sign In</a>`;

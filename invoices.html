@@ -527,7 +527,8 @@
   }
 
   function escHtml(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return String(str ?? '').replace(/[&<>"']/g, m => map[m]);
   }
 
   let toastTimer;
