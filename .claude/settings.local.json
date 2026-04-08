@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls *.html)",
+      "mcp__claude_ai_Vercel__deploy_to_vercel"
+    ]
+  }
+}
